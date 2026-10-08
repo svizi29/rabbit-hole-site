@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Rabbit Hole Privacy</title>
+<meta name="description" content="What Rabbit Hole and rabbit-hole.video keep about you, why, and how to have it removed.">
+<link rel="icon" href="/landing-favicon.png" type="image/png">
+<style>
+@font-face { font-family: 'Bricolage Grotesque'; font-weight: 700; font-display: swap; src: url(/fonts/BricolageGrotesque_700_latin.woff2) format('woff2'); }
+@font-face { font-family: 'Bricolage Grotesque'; font-weight: 700; font-display: swap; src: url(/fonts/BricolageGrotesque_700_latin-ext.woff2) format('woff2'); unicode-range: U+0100-024F, U+1E00-1EFF; }
+@font-face { font-family: 'Hanken Grotesk'; font-weight: 400; font-display: swap; src: url(/fonts/HankenGrotesk_400_latin.woff2) format('woff2'); }
+@font-face { font-family: 'Hanken Grotesk'; font-weight: 400; font-display: swap; src: url(/fonts/HankenGrotesk_400_latin-ext.woff2) format('woff2'); unicode-range: U+0100-024F, U+1E00-1EFF; }
+@font-face { font-family: 'Hanken Grotesk'; font-weight: 600; font-display: swap; src: url(/fonts/HankenGrotesk_600_latin.woff2) format('woff2'); }
+@font-face { font-family: 'Hanken Grotesk'; font-weight: 600; font-display: swap; src: url(/fonts/HankenGrotesk_600_latin-ext.woff2) format('woff2'); unicode-range: U+0100-024F, U+1E00-1EFF; }
+@font-face { font-family: 'JetBrains Mono'; font-weight: 500; font-display: swap; src: url(/fonts/JetBrainsMono_500_latin.woff2) format('woff2'); }
+/* The site's own look: near-black ground, violet accent, dark only (as rabbit-hole.video). */
+:root { --ink: #0a0a0f; --s1: #121218; --line: rgba(255,255,255,0.09); --text: #f2f2f5; --text-2: #c4c4cf; --text-3: #8e8e9b; --accent: #ab9bff; color-scheme: dark; }
+* { box-sizing: border-box; }
+html { background: var(--ink); }
+body { margin: 0; background: var(--ink); color: var(--text-2); font: 400 16px/1.65 'Hanken Grotesk', system-ui, -apple-system, 'Segoe UI', sans-serif; -webkit-font-smoothing: antialiased; }
+main { max-width: 720px; margin: 0 auto; padding: 56px 16px 96px; }
+a { color: var(--accent); text-underline-offset: 3px; }
+a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 3px; }
+.home { display: inline-flex; align-items: center; gap: 10px; color: var(--text); text-decoration: none; font: 700 18px/1 'Bricolage Grotesque', 'Hanken Grotesk', system-ui, sans-serif; letter-spacing: -0.01em; }
+.home img { width: 28px; height: 28px; border-radius: 7px; }
+.eyebrow { margin: 44px 0 6px; font: 500 12px/1.3 'JetBrains Mono', ui-monospace, Menlo, monospace; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-3); }
+h1 { margin: 0 0 14px; color: var(--text); font: 700 clamp(34px, 6vw, 46px)/1.08 'Bricolage Grotesque', 'Hanken Grotesk', system-ui, sans-serif; letter-spacing: -0.02em; text-wrap: balance; }
+.lede { margin: 0 0 8px; font-size: 18px; color: var(--text); max-width: 60ch; }
+h2 { margin: 44px 0 10px; color: var(--text); font: 600 20px/1.3 'Hanken Grotesk', system-ui, sans-serif; text-wrap: balance; }
+p, li { max-width: 65ch; }
+ul { padding-left: 1.2em; margin: 8px 0; }
+li { margin: 6px 0; }
+li::marker { color: var(--text-3); }
+strong { color: var(--text); font-weight: 600; }
+.box { margin-top: 18px; padding: 16px 18px; background: var(--s1); border: 1px solid var(--line); border-radius: 12px; }
+.box p { margin: 0; }
+footer { margin-top: 56px; padding-top: 20px; border-top: 1px solid var(--line); font-size: 14px; color: var(--text-3); }
+</style>
+</head>
+<body>
+<main>
+  <a class="home" href="/"><img src="/landing-favicon.png" alt="" width="28" height="28">Rabbit Hole</a>
+
+  <p class="eyebrow">Last updated 8 October 2026</p>
+  <h1>Privacy</h1>
+  <p class="lede">Rabbit Hole keeps your work on your own computer. To sign you in and give you access, it keeps a little about you. Here is all of it.</p>
+
+  <div class="box"><p>Rabbit Hole and rabbit-hole.video are made by <strong>The North Watch, produkcija filmov, Gašper Jager s.p.</strong> (Slovenia). Questions or requests: <a href="mailto:gasper.jager@gmail.com">gasper.jager@gmail.com</a>.</p></div>
+
+  <h2>When you sign in</h2>
+  <ul>
+    <li><strong>Your account.</strong> Your email address, and with Google sign-in the name and profile picture Google shares. Accounts run on Google Firebase Authentication. If you use a password, Firebase stores it; we never see it.</li>
+    <li><strong>Your access.</strong> Your organisation's admin keeps a list of who may use Rabbit Hole: your email, the access you were given, and any name or note the admin adds.</li>
+    <li><strong>Hourly check-ins.</strong> While it runs, the app checks your access about once an hour. Each check records when it happened, the app version and the type of computer (for example "MacIntel"). It also reports a daily summary of AI use: which provider and model, how many times, and an estimated cost. The admin sees this to manage shared keys. Usage summaries are kept for 120 days.</li>
+  </ul>
+
+  <h2>Your files and prompts</h2>
+  <p>Your projects, footage and exports stay on your computer. When you generate something with AI, the prompt and the files you choose go straight from your computer to that AI provider (for example Google Gemini, Anthropic, OpenRouter, ElevenLabs, BytePlus, Tripo, MiniMax or fal), under that provider's terms. We do not receive a copy.</p>
+
+  <h2>Error reports</h2>
+  <p>Only when you send one (Report an issue, or Send diagnostics in Settings). A report holds the app's log, a screenshot, your note, the app version and your operating system. It is stored privately and used only to fix problems.</p>
+
+  <h2>Google sign-in</h2>
+  <p>Signing in with Google uses only your basic profile: name, email address and profile picture. We use it to sign you in and to show your organisation's admin who you are. It is not sold, not shared, and not used for advertising. Rabbit Hole's use of information received from Google APIs adheres to the <a href="https://developers.google.com/terms/api-services-user-data-policy">Google API Services User Data Policy</a>, including the Limited Use requirements.</p>
+
+  <h2>This website</h2>
+  <p>rabbit-hole.video has no cookies, no analytics and no ads. It is hosted on GitHub Pages; GitHub may keep standard server logs, such as IP addresses (see <a href="https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement">GitHub's privacy statement</a>). The admin page keeps your sign-in in your own browser until you sign out.</p>
+
+  <h2>Where it is kept</h2>
+  <p>Accounts are in Google Firebase. The admin's list, check-ins and usage are in the organisation owner's Google account, through Google Apps Script. Nothing is sold, and nothing is used for advertising.</p>
+
+  <h2>Your choices</h2>
+  <p>Write to <a href="mailto:gasper.jager@gmail.com">gasper.jager@gmail.com</a> to see, correct or delete what we keep about you. Deleting your account removes it from Firebase and from the admin's list, and Rabbit Hole stops working for you at its next check. You can also ask your organisation's admin to remove you.</p>
+
+  <h2>Changes</h2>
+  <p>If this changes, the date at the top changes with it.</p>
+
+  <footer><a href="/">rabbit-hole.video</a> · Made by The North Watch</footer>
+</main>
+</body>
+</html>
