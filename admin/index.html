@@ -201,6 +201,10 @@ details summary { cursor: pointer; color: var(--rh-text-2); }
 .gate-google svg { width: 18px; height: 18px; flex: none; }
 .gate-or { display: flex; align-items: center; gap: 10px; color: var(--rh-text-4); font: 500 11px/1 var(--rh-mono); text-transform: uppercase; letter-spacing: 0.08em; }
 .gate-or::before, .gate-or::after { content: ''; flex: 1; border-top: 1px solid var(--rh-line-2); }
+.gate-card.signed .gate-google, .gate-card.signed .gate-or, .gate-card.signed label, .gate-card.signed #gGo, .gate-card.signed #gForgot, .gate-card.signed #gCreate { display: none; }
+.gate-dl[hidden] { display: none; }
+.gate-dl p, .rh-dl .dl-msg { margin: 8px 0 0; color: var(--rh-text-3); }
+.rh-dl-os a[aria-disabled] { opacity: 0.5; pointer-events: none; }
 </style>
 </head>
 <body>
@@ -213,6 +217,7 @@ details summary { cursor: pointer; color: var(--rh-text-2); }
     <label>Email<input type="email" id="gEmail" autocomplete="username" required></label>
     <label>Password<input type="password" id="gPass" autocomplete="current-password" required></label>
     <p class="gate-msg" id="gMsg" role="status" aria-live="polite"></p>
+    <div class="gate-dl" id="gDl" hidden></div>
     <button class="btn primary" id="gGo" type="submit">Sign in</button>
     <div class="gate-links">
       <button type="button" class="lnk" id="gForgot">Forgot password?</button>
@@ -227,7 +232,9 @@ details summary { cursor: pointer; color: var(--rh-text-2); }
   <span class="grow"></span>
   
   <span class="me" id="me"></span>
+  <button class="btn sm" id="dlBtn" hidden>Download Rabbit Hole</button>
   <button class="btn sm" id="signout" hidden>Sign out</button>
+<dialog class="rh-dl" id="nwDl" aria-labelledby="nwDlT"><b id="nwDlT">Download Rabbit Hole</b><p>The North Watch version. It keeps itself up to date for the people on this list.</p><div id="nwDlBody"></div><form method="dialog"><button>Close</button></form></dialog>
 </header>
 <main>
   <div class="tabs" role="tablist">
@@ -330,12 +337,57 @@ function setMsg(t, kind) { var m = $('gMsg'); m.textContent = t || ''; m.classNa
 function gate(msg, reason) {
   $('gate').hidden = false
   $('signout').hidden = true
+  $('dlBtn').hidden = true
   var s = readS()
   if (s && !$('gEmail').value) $('gEmail').value = s.email
   setMsg(msg, reason ? 'bad' : '')
   $('gResend').hidden = reason !== 'verify'
   $('gOther').hidden = !(reason === 'verify' || reason === 'notadmin')
+  // Signed in but not an admin: the people on the list download Rabbit Hole here (the admin decides who).
+  var signed = reason === 'notadmin' && !!s
+  $('gateForm').classList.toggle('signed', signed)
+  $('gDl').hidden = !signed
+  if (signed) { setMsg('Signed in as ' + s.email + '.'); renderDownloads($('gDl')) }
 }
+
+// ── Download Rabbit Hole (Gasper, 2026-10-11): North Watch installers for the people on the list ──
+// The admin checks the sign-in and the list, and answers a GitHub link that works for a few minutes
+// (its GitHub token never reaches this page); the browser then downloads it.
+function nwApi(body) {
+  return idToken().then(function (tok) {
+    if (!tok) throw new Error('Sign in again.')
+    return fetch(CFG.api, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(Object.assign({ idToken: tok }, body)) })
+      .then(function (r) { if (!r.ok) throw new Error('The admin did not answer (HTTP ' + r.status + '). Try again.'); return r.json() })
+  })
+}
+function mb(n) { return Math.round(Number(n || 0) / 1048576) + ' MB' }
+function renderDownloads(el) {
+  el.innerHTML = '<p>Looking for the newest version…</p>'
+  return nwApi({ action: 'download' }).then(function (j) {
+    if (!j.ok) { el.innerHTML = '<p class="gate-msg bad">' + esc(j.message || j.error || 'Not available.') + '</p>'; return }
+    var opt = function (os, name, sub, a) {
+      return a ? '<a href="#" data-os="' + os + '">' + name + '<span>' + sub + ' · ' + esc(a.version) + ' · ' + mb(a.size) + '</span></a>'
+        : '<a aria-disabled="true">' + name + '<span>Not published yet</span></a>'
+    }
+    el.innerHTML = '<div class="rh-dl-os">' + opt('mac', 'Mac', 'Apple silicon', j.mac) + opt('win', 'Windows', '64-bit', j.win) + '</div>' +
+      (j.error ? '<p>' + esc(j.error) + '</p>' : '') + '<p class="dl-msg" role="status" aria-live="polite"></p>'
+    Array.prototype.forEach.call(el.querySelectorAll('a[data-os]'), function (a) {
+      a.onclick = function (ev) {
+        ev.preventDefault()
+        var os = a.getAttribute('data-os'), msg = el.querySelector('.dl-msg')
+        msg.textContent = 'Starting the download…'
+        nwApi({ action: 'download', os: os }).then(function (d) {
+          if (!d.ok || !d.url) throw new Error(d.message || d.error || 'No download link.')
+          msg.textContent = 'Downloading ' + d.name + ' (' + mb(d.size) + '). ' + (os === 'mac'
+            ? 'Open the DMG and drag Rabbit Hole to Applications.'
+            : 'Run the installer; if Windows asks, choose More info, then Run anyway.') + ' Then open Rabbit Hole and sign in with this account.'
+          window.location.href = d.url
+        }).catch(function (e) { msg.textContent = String(e && e.message || e) })
+      }
+    })
+  }).catch(function (e) { el.innerHTML = '<p class="gate-msg bad">' + esc(String(e && e.message || e)) + '</p>' })
+}
+$('dlBtn').onclick = function () { $('nwDl').showModal(); renderDownloads($('nwDlBody')) }
 function setMode(m) {
   gateMode = m
   $('gGo').textContent = m === 'create' ? 'Create account' : 'Sign in'
@@ -457,21 +509,23 @@ function renderPeople() {
     '</div>'
   html += '<div class="bar">' + (d.hasDam ? '<label class="dim" for="rpany">Creative report</label><select id="rpany"><option value="1"' + (d.settings.reportAnyone ? ' selected' : '') + '>Anyone with a ' + esc(d.org) + ' account</option><option value="0"' + (d.settings.reportAnyone ? '' : ' selected') + '>Only people with Report ticked</option></select>' : '') +
     '<span class="grow"></span><input type="search" id="find" placeholder="Find" style="width:180px"></div>'
-  html += '<div class="card scroll"><table class="ppl"><thead><tr><th>Person</th><th>Access</th>' + (dam ? '<th class="c">Analytics</th><th class="c">Report</th>' : '') + '<th class="c">Local app</th>' + (dam ? '<th>DAM groups</th>' : '') + '<th>Modules</th><th class="hide-sm">Last seen</th><th></th></tr></thead><tbody id="ppl">'
+  html += '<div class="card scroll"><table class="ppl"><thead><tr><th>Person</th><th>Access</th>' + (dam ? '<th class="c">Analytics</th><th class="c">Report</th>' : '') + '<th class="c">Local app</th><th class="c" title="The Creative Command Center — yours until you tick someone">CCC</th><th class="c" title="Gets Growth Daily, the daily newsletter">Growth Daily</th>' + (dam ? '<th>DAM groups</th>' : '') + '<th>Modules</th><th class="hide-sm">Last seen</th><th></th></tr></thead><tbody id="ppl">'
   list.forEach(function (p, i) {
     var seen = p.seen ? when(p.seen.at) + (p.seen.v ? ' <span class="mono dim">' + esc(p.seen.v) + '</span>' : '') : '<span class="dim">never</span>'
     var who = '<td class="who"><b>' + esc(p.name || p.e.split('@')[0]) + (p.owner ? ' <span class="pill admin">Owner</span>' : '') + (p.status === 'suspended' ? ' <span class="pill off">Suspended</span>' : '') + '</b><span>' + esc(p.e) + '</span></td>'
     if (p.owner) {
-      html += '<tr data-i="' + i + '">' + who + '<td><span class="pill admin">Admin</span></td>' + (dam ? '<td class="c">✓</td><td class="c">✓</td>' : '') + '<td class="c">✓</td>' + (dam ? '<td class="dim">every folder</td>' : '') +
+      html += '<tr data-i="' + i + '">' + who + '<td><span class="pill admin">Admin</span></td>' + (dam ? '<td class="c">✓</td><td class="c">✓</td>' : '') + '<td class="c">✓</td><td class="c">✓</td><td class="c">✓</td>' + (dam ? '<td class="dim">every folder</td>' : '') +
         '<td><button class="lnk" data-mods="' + i + '">' + (Array.isArray(p.m) ? 'Custom · ' + p.m.length : 'Everything') + '</button></td><td class="hide-sm">' + seen + '</td><td class="dim">can’t be removed</td></tr>'
       return
     }
     var adm = p.level === 'admin'
     var box = function (k) { return '<td class="c"><input type="checkbox" data-k="' + k + '" data-i="' + i + '"' + (adm || p[k] ? ' checked' : '') + (adm ? ' disabled title="Admins have every page and the app"' : '') + ' aria-label="' + k + ' for ' + esc(p.e) + '"></td>' }
+    // not given by the access level: ticked per person, admins included
+    var tick = function (k, label) { return '<td class="c"><input type="checkbox" data-k="' + k + '" data-i="' + i + '"' + (p[k] ? ' checked' : '') + ' aria-label="' + label + ' for ' + esc(p.e) + '"></td>' }
     var gchips = S.groups.length ? S.groups.map(function (g) { return '<button class="gchip' + ((p.g || []).indexOf(g.id) >= 0 ? ' on' : '') + '" data-ug="' + i + '" data-g="' + esc(g.id) + '">' + esc(g.name) + '</button>' }).join('') : '<span class="dim">no groups</span>'
     html += '<tr data-i="' + i + '">' + who +
       '<td><select data-level="' + i + '" aria-label="Access for ' + esc(p.e) + '">' + ['none', 'user', 'power', 'admin'].filter(function (l) { return dam || l !== 'none' || p.level === 'none' }).map(function (l) { return '<option value="' + l + '"' + (p.level === l ? ' selected' : '') + '>' + LEVEL_LABEL[l] + '</option>' }).join('') + '</select></td>' +
-      (dam ? box('an') + box('rp') : '') + box('app') +
+      (dam ? box('an') + box('rp') : '') + box('app') + tick('cc', 'Creative Command Center (CCC)') + tick('nl', 'Growth Daily newsletter') +
       (dam ? '<td><div class="chips">' + (adm || p.level === 'power' ? '<span class="dim">every folder</span>' : gchips) + '</div></td>' : '') +
       '<td>' + (appOn(p) ? '<button class="lnk" data-mods="' + i + '">' + (Array.isArray(p.m) ? 'Custom · ' + p.m.length : 'The level’s · ' + modsOf(p).length) + '</button>' : '<span class="dim">no app</span>') + '</td>' +
       '<td class="hide-sm">' + seen + '</td>' +
@@ -699,7 +753,7 @@ function start() {
   return idToken().then(function (t) {
     if (!t) { gate(''); return }
     setMsg('Opening…')
-    return reload().then(function () { $('gate').hidden = true; $('signout').hidden = false; setMsg('') })
+    return reload().then(function () { $('gate').hidden = true; $('signout').hidden = false; $('dlBtn').hidden = false; setMsg('') })
       .catch(function (e) { if (!e.gated) gate(String(e && e.message || e), 'error') })
   })
 }
