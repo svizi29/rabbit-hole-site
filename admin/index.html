@@ -241,11 +241,15 @@ details summary { cursor: pointer; color: var(--rh-text-2); }
     <button role="tab" data-tab="people" aria-selected="true">People</button>
     <button role="tab" data-tab="usage" aria-selected="false">Usage</button>
     <button role="tab" data-tab="keys" aria-selected="false">API keys</button>
+    <button role="tab" data-tab="jira" aria-selected="false" hidden>Jira</button>
+    <button role="tab" data-tab="games" aria-selected="false" hidden>Games</button>
     <button role="tab" data-tab="log" aria-selected="false">Log</button>
   </div>
   <section id="tab-people"></section>
   <section id="tab-usage" hidden></section>
   <section id="tab-keys" hidden></section>
+  <section id="tab-jira" hidden></section>
+  <section id="tab-games" hidden></section>
   <section id="tab-log" hidden></section>
 </main>
 
@@ -480,8 +484,10 @@ document.querySelector('.tabs').addEventListener('click', function (ev) {
 })
 function showTab(t) {
   document.querySelectorAll('.tabs button').forEach(function (b) { b.setAttribute('aria-selected', b.dataset.tab === t ? 'true' : 'false') })
-  ;['people', 'usage', 'keys', 'log'].forEach(function (x) { $('tab-' + x).hidden = x !== t })
+  ;['people', 'usage', 'keys', 'jira', 'games', 'log'].forEach(function (x) { $('tab-' + x).hidden = x !== t })
+  if (t === 'games') renderGames()
   if (t === 'usage' && !S.usage) loadUsage()
+  if (t === 'jira') loadJira()
   if (t === 'log') loadAudit()
 }
 
@@ -654,14 +660,27 @@ function loadUsage() {
 }
 function renderUsage() {
   var u = S.usage, el = $('tab-usage')
-  var per = {}, prov = {}, total = 0, calls = 0
+  var per = {}, prov = {}, cats = {}, total = 0, calls = 0
   u.rows.forEach(function (r) {
     var x = per[r.e] || (per[r.e] = { e: r.e, n: 0, usd: 0, prov: {}, rows: [], last: '' })
     x.n += r.n; x.usd += r.usd; x.rows.push(r); if (r.last > x.last) x.last = r.last
     x.prov[r.p] = (x.prov[r.p] || 0) + r.usd
     prov[r.p] = prov[r.p] || { n: 0, usd: 0 }; prov[r.p].n += r.n; prov[r.p].usd += r.usd
+    var c = r.cat || 'Other'; cats[c] = cats[c] || { n: 0, usd: 0 }; cats[c].n += r.n; cats[c].usd += r.usd
     total += r.usd; calls += r.n
   })
+  var CAT_ORDER = ['Video', 'Image', 'Text & AI assistants', 'Audio', '3D', 'Upscale', 'Data', 'Other']
+  // What a row used, where Rabbit Hole knows it (2.1+): images, seconds, tokens, characters.
+  function used(r) {
+    var o = []
+    if (r.i) o.push(r.i.toLocaleString('en') + ' img')
+    if (r.s) o.push(r.s >= 120 ? Math.round(r.s / 60).toLocaleString('en') + ' min' : Math.round(r.s) + ' s')
+    if (r.t) o.push((r.t >= 1e6 ? (r.t / 1e6).toFixed(1) + 'M' : r.t >= 1e3 ? Math.round(r.t / 1e3) + 'k' : r.t) + ' tok')
+    if (r.c) o.push(r.c.toLocaleString('en') + ' chars')
+    return o.join(' · ')
+  }
+  // $0 rows: Higgsfield bills credits, Sensor Tower is a flat licence, anything else has no list price on file.
+  function spend(r) { return r.usd > 0 ? usd(r.usd) : r.p === 'higgsfield' ? 'credits' : r.p === 'sensortower' ? 'calls' : usd(0) }
   var list = Object.keys(per).map(function (k) { return per[k] }).sort(function (a, b) { return b.usd - a.usd || b.n - a.n })
   var provs = Object.keys(prov).sort(function (a, b) { return prov[b].usd - prov[a].usd })
   var h = '<div class="bar"><div class="seg" id="uDays">' + [7, 30, 90].map(function (d) { return '<button type="button" data-d="' + d + '" aria-pressed="' + (S.usageDays === d) + '">' + d + ' days</button>' }).join('') + '</div>' +
@@ -670,14 +689,17 @@ function renderUsage() {
     '<div class="card stat"><span class="rh-eyebrow">Generations and calls</span><span class="rh-num">' + calls.toLocaleString('en') + '</span></div>' +
     '<div class="card stat"><span class="rh-eyebrow">People using it</span><span class="rh-num">' + list.length + '</span></div></div>'
   h += '<p class="intro">Each Rabbit Hole reports what it used with its hourly check: provider, model, how many and the estimated cost (Rabbit Hole\'s own price list, not the provider\'s invoice). Click a person for the models.</p>'
+  var catList = CAT_ORDER.filter(function (c) { return cats[c] })
+  if (catList.length) h += '<div class="card scroll"><table><thead><tr><th>Kind of work</th><th class="num">Calls</th><th class="num">Estimated</th></tr></thead><tbody>' +
+    catList.map(function (c) { return '<tr><td>' + esc(c) + '</td><td class="num">' + cats[c].n.toLocaleString('en') + '</td><td class="num">' + usd(cats[c].usd) + '</td></tr>' }).join('') + '</tbody></table></div>'
   if (provs.length) h += '<div class="card scroll"><table><thead><tr><th>Provider</th><th class="num">Calls</th><th class="num">Estimated</th></tr></thead><tbody>' +
     provs.map(function (k) { return '<tr><td>' + esc(k) + '</td><td class="num">' + prov[k].n.toLocaleString('en') + '</td><td class="num">' + usd(prov[k].usd) + '</td></tr>' }).join('') + '</tbody></table></div>'
   h += '<div class="card scroll"><table><thead><tr><th>Person</th><th>By provider</th><th class="num">Calls</th><th class="num">Estimated</th><th class="hide-sm">Last used</th></tr></thead><tbody id="uRows">'
   list.forEach(function (x, i) {
     var chips = Object.keys(x.prov).sort(function (a, b) { return x.prov[b] - x.prov[a] }).map(function (k) { return '<span class="pill">' + esc(k) + ' ' + usd(x.prov[k]) + '</span>' }).join('')
     h += '<tr class="click" data-i="' + i + '"><td class="who"><b>' + esc(nameOf(x.e)) + '</b><span>' + esc(x.e) + '</span></td><td><div class="chips">' + chips + '</div></td><td class="num">' + x.n.toLocaleString('en') + '</td><td class="num">' + usd(x.usd) + '</td><td class="hide-sm">' + esc(x.last) + '</td></tr>'
-    h += '<tr data-detail="' + i + '" hidden><td colspan="5"><table><thead><tr><th>Provider</th><th>Model</th><th>Kind</th><th class="num">Calls</th><th class="num">Estimated</th></tr></thead><tbody>' +
-      x.rows.sort(function (a, b) { return b.usd - a.usd }).map(function (r) { return '<tr><td>' + esc(r.p) + '</td><td class="mono">' + esc(r.m || '—') + '</td><td>' + esc(r.k || '') + '</td><td class="num">' + r.n.toLocaleString('en') + '</td><td class="num">' + usd(r.usd) + '</td></tr>' }).join('') +
+    h += '<tr data-detail="' + i + '" hidden><td colspan="5"><table><thead><tr><th>Kind of work</th><th>Provider</th><th>Model</th><th>Kind</th><th class="hide-sm">Used</th><th class="num">Calls</th><th class="num">Estimated</th></tr></thead><tbody>' +
+      x.rows.sort(function (a, b) { return CAT_ORDER.indexOf(a.cat || 'Other') - CAT_ORDER.indexOf(b.cat || 'Other') || b.usd - a.usd || b.n - a.n }).map(function (r) { return '<tr><td>' + esc(r.cat || 'Other') + '</td><td>' + esc(r.p) + '</td><td class="mono">' + esc(r.m || '—') + '</td><td>' + esc(r.k || '') + '</td><td class="hide-sm">' + esc(used(r) || '—') + '</td><td class="num">' + r.n.toLocaleString('en') + '</td><td class="num">' + spend(r) + '</td></tr>' }).join('') +
       '</tbody></table></td></tr>'
   })
   h += '</tbody></table>' + (list.length ? '' : '<div class="empty">Nothing reported in this period yet. Usage arrives once people run a Rabbit Hole that signs in here.</div>') + '</div>'
@@ -687,6 +709,33 @@ function renderUsage() {
 }
 
 // ── Keys ──
+// ── Games ──
+// The games a Studio project picks from (TSG). Only a game project shares with the TSG Elements library; Other is
+// always offered and never shares. Rename or retire a game; a game is never removed (old projects use it).
+function renderGames() {
+  var el = $('tab-games')
+  if (!S.games) S.games = (S.data.games || []).map(function (g) { return { id: g.id, name: g.name, codes: (g.codes || []).slice(), retired: !!g.retired } })
+  var rows = S.games.map(function (g, i) {
+    return '<tr><td><input data-gname="' + i + '" value="' + esc(g.name) + '" maxlength="40"></td>' +
+      '<td class="muted">' + esc(g.id || 'new') + '</td>' +
+      '<td><input data-gcodes="' + i + '" value="' + esc((g.codes || []).join(', ')) + '" placeholder="FC" size="8" title="Ticket codes, e.g. FC (comma-separated)"></td>' +
+      '<td><label><input type="checkbox" data-gret="' + i + '"' + (g.retired ? ' checked' : '') + '> Retired</label></td>' +
+      '<td>' + (g.id ? '' : '<button class="btn ghost" data-gdel="' + i + '">Remove</button>') + '</td></tr>'
+  }).join('')
+  el.innerHTML = '<div class="card"><p class="muted">The game a Studio project is for. Only projects with a game share their finals with the TSG Elements library; ' +
+    '<b>Other</b> is always offered and never shares. A retired game stays on its old projects and is no longer offered for new ones. Games are never removed.</p>' +
+    '<table><thead><tr><th>Game</th><th>Id</th><th>Ticket codes</th><th></th><th></th></tr></thead><tbody>' + rows + '<tr><td colspan="5" class="muted">Other (always there)</td></tr></tbody></table>' +
+    '<div class="row"><input id="gnew" placeholder="Add a game" maxlength="40"> <button class="btn ghost" id="gadd">Add</button> <button class="btn" id="gsave">Save games</button></div></div>'
+  el.querySelectorAll('[data-gname]').forEach(function (x) { x.oninput = function () { S.games[+x.dataset.gname].name = x.value } })
+  el.querySelectorAll('[data-gret]').forEach(function (x) { x.onchange = function () { S.games[+x.dataset.gret].retired = x.checked } })
+  el.querySelectorAll('[data-gcodes]').forEach(function (x) { x.oninput = function () { S.games[+x.dataset.gcodes].codes = x.value.split(/[\s,]+/).filter(Boolean) } })
+  el.querySelectorAll('[data-gdel]').forEach(function (x) { x.onclick = function () { S.games.splice(+x.dataset.gdel, 1); renderGames() } })
+  $('gadd').onclick = function () { var v = $('gnew').value.trim(); if (v) { S.games.push({ name: v, codes: [], retired: false }); renderGames() } }
+  $('gsave').onclick = function () {
+    call('saveGames', S.games).then(function (list) { S.data.games = list; S.games = null; renderGames(); toast('Games saved') }).catch(fail)
+  }
+}
+
 function renderKeysOnGoogle_() {
   var d = S.data, el = $('tab-keys')
   var byName = {}; d.keys.forEach(function (k) { byName[k.name] = k })
@@ -728,6 +777,41 @@ function renderKeysOnGoogle_() {
   }
 }
 
+// ── Jira: who is who (people's open tickets in "New project from Jira ticket"; admins see everyone's) ──
+var JIRA_HOW = { email: 'by e-mail', name: 'by name', admin: 'set by an admin', none: 'not found' }
+function loadJira(fresh) {
+  $('tab-jira').innerHTML = '<div class="empty">' + (fresh ? 'Matching everyone in Jira…' : 'Loading…') + '</div>'
+  return call(fresh ? 'matchJiraUsers' : 'getJiraLinks', fresh === 'all').then(renderJira).catch(function (e) { $('tab-jira').innerHTML = '<div class="empty">' + esc(String(e && e.message || e)) + '</div>' })
+}
+function renderJira(d) {
+  var h = '<p class="intro">Rabbit Hole shows each person the GROW tickets assigned to them when they start a project from a Jira ticket; admins see everyone’s, with a filter by person. Each e-mail is matched to a Jira account by e-mail, else by name. Correct a wrong or missing match here: your link always wins.</p>'
+  if (!d.creds) h += '<p class="intro"><b>Set the Jira site, login e-mail and API token on the API keys tab first.</b></p>'
+  h += '<div class="bar"><button class="btn primary" id="jMatch"' + (d.creds ? '' : ' disabled') + '>Match the unmatched</button><button class="btn" id="jMatchAll"' + (d.creds ? '' : ' disabled') + '>Match everyone again</button><span class="dim">Links set by an admin are kept.</span></div>'
+  h += '<div class="card scroll"><table><thead><tr><th>Person</th><th>Jira account</th><th class="hide-sm">How</th><th></th></tr></thead><tbody>'
+  d.rows.forEach(function (r) {
+    var j = r.jira
+    h += '<tr><td class="who"><b>' + esc(r.name) + '</b><span>' + esc(r.e) + '</span></td>' +
+      '<td>' + (j && j.id ? esc(j.name || j.id) : j ? '<span class="pill off">None</span>' : '<span class="dim">not matched yet</span>') + '</td>' +
+      '<td class="hide-sm dim">' + (j ? esc(JIRA_HOW[j.id ? j.how : (j.how === 'admin' ? 'admin' : 'none')] || j.how) + (j.at ? ' · ' + when(j.at) : '') : '') + '</td>' +
+      '<td style="white-space:nowrap"><button class="btn sm" data-jset="' + esc(r.e) + '">Set…</button>' + (j ? ' <button class="lnk" data-jclear="' + esc(r.e) + '">Forget</button>' : '') + ' <button class="lnk" data-jnone="' + esc(r.e) + '">No account</button></td></tr>'
+  })
+  h += '</tbody></table></div>'
+  var el = $('tab-jira'); el.innerHTML = h
+  $('jMatch').onclick = function () { loadJira(true) }
+  $('jMatchAll').onclick = function () { if (confirm('Match everyone again? Links set by an admin are kept.')) loadJira('all') }
+  el.onclick = function (ev) {
+    var b = ev.target.closest('button[data-jset],button[data-jclear],button[data-jnone]'); if (!b) return
+    if (b.dataset.jclear) return call('clearJiraUser', b.dataset.jclear, false).then(renderJira).catch(fail)
+    if (b.dataset.jnone) return call('clearJiraUser', b.dataset.jnone, true).then(function (x) { toast('Marked: no Jira account'); renderJira(x) }).catch(fail)
+    var q = prompt('Jira name, e-mail or account id for ' + b.dataset.jset + ':')
+    if (q == null || !q.trim()) return
+    call('setJiraUser', b.dataset.jset, q.trim()).then(function (r) {
+      if (r.set) { toast('Linked'); renderJira(r.links) }
+      else toast(r.candidates.length ? r.candidates.length + ' Jira people match: ' + r.candidates.join(', ') + '. Type the full name.' : 'Nobody in Jira matches that.', true)
+    }).catch(fail)
+  }
+}
+
 // ── Log ──
 function loadAudit() {
   $('tab-log').innerHTML = '<div class="empty">Loading…</div>'
@@ -745,6 +829,10 @@ function apply(d) {
   $('me').textContent = d.me
   var a = document.querySelector('.rh-suite .rh-admin'); if (a) a.hidden = false
   var dl = document.querySelector('.rh-suite .rh-download'); if (dl) dl.hidden = false // admins always have the app
+  var jt = document.querySelector('.tabs button[data-tab="jira"]'); if (jt) jt.hidden = !d.jira
+  // Games: TSG's (the organisation whose Studio projects can share with the TSG Elements library).
+  var gt = document.querySelector('.tabs [data-tab="games"]'); if (gt) gt.hidden = d.orgId !== 'tsg'
+  S.games = null
   renderPeople(); renderKeys()
 }
 function reload() { return call('getAdmin').then(apply) }
