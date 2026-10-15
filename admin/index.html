@@ -803,6 +803,9 @@ function renderJira(d) {
     var b = this; b.disabled = true; b.textContent = 'Moving…'
     call('jiraRhToBoard').then(function (r) {
       b.textContent = r.moved.length + ' moved to To Do'
+      var out = document.createElement('p'); out.className = 'intro'; out.id = 'jToBoardOut'
+      out.textContent = (r.moved.length ? 'Moved: ' + r.moved.join(', ') + '. ' : '') + (r.failed.length ? 'Not moved: ' + r.failed.join(' · ') : (r.moved.length ? '' : 'No Rabbit Hole ticket was left in New.'))
+      var old = $('jToBoardOut'); if (old) old.remove(); b.parentNode.insertAdjacentElement('afterend', out)
       toast(r.failed.length ? r.moved.length + ' moved; not moved: ' + r.failed.join(' · ') : (r.moved.length ? r.moved.length + ' tickets moved to To Do: ' + r.moved.join(', ') : 'No Rabbit Hole tickets were left in New.'), !!r.failed.length)
     }).catch(function (e) { b.disabled = false; b.textContent = 'Move Rabbit Hole tickets to To Do'; fail(e) })
   }
