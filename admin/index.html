@@ -786,7 +786,7 @@ function loadJira(fresh) {
 function renderJira(d) {
   var h = '<p class="intro">Rabbit Hole shows each person the GROW tickets assigned to them when they start a project from a Jira ticket; admins see everyone’s, with a filter by person. Each e-mail is matched to a Jira account by e-mail, else by name. Correct a wrong or missing match here: your link always wins.</p>'
   if (!d.creds) h += '<p class="intro"><b>Set the Jira site, login e-mail and API token on the API keys tab first.</b></p>'
-  h += '<div class="bar"><button class="btn primary" id="jMatch"' + (d.creds ? '' : ' disabled') + '>Match the unmatched</button><button class="btn" id="jMatchAll"' + (d.creds ? '' : ' disabled') + '>Match everyone again</button><span class="dim">Links set by an admin are kept.</span></div>'
+  h += '<div class="bar"><button class="btn primary" id="jMatch"' + (d.creds ? '' : ' disabled') + '>Match the unmatched</button><button class="btn" id="jMatchAll"' + (d.creds ? '' : ' disabled') + '>Match everyone again</button><span class="dim">Links set by an admin are kept.</span><button class="btn" id="jToBoard"' + (d.creds ? '' : ' disabled') + ' title="Rabbit Hole tickets still in New are off the Video board: move them to To Do">Move Rabbit Hole tickets to To Do</button></div>'
   h += '<div class="card scroll"><table><thead><tr><th>Person</th><th>Jira account</th><th class="hide-sm">How</th><th></th></tr></thead><tbody>'
   d.rows.forEach(function (r) {
     var j = r.jira
@@ -799,6 +799,13 @@ function renderJira(d) {
   var el = $('tab-jira'); el.innerHTML = h
   $('jMatch').onclick = function () { loadJira(true) }
   $('jMatchAll').onclick = function () { if (confirm('Match everyone again? Links set by an admin are kept.')) loadJira('all') }
+  $('jToBoard').onclick = function () {
+    var b = this; b.disabled = true; b.textContent = 'Moving…'
+    call('jiraRhToBoard').then(function (r) {
+      b.textContent = r.moved.length + ' moved to To Do'
+      toast(r.failed.length ? r.moved.length + ' moved; not moved: ' + r.failed.join(' · ') : (r.moved.length ? r.moved.length + ' tickets moved to To Do: ' + r.moved.join(', ') : 'No Rabbit Hole tickets were left in New.'), !!r.failed.length)
+    }).catch(function (e) { b.disabled = false; b.textContent = 'Move Rabbit Hole tickets to To Do'; fail(e) })
+  }
   el.onclick = function (ev) {
     var b = ev.target.closest('button[data-jset],button[data-jclear],button[data-jnone]'); if (!b) return
     if (b.dataset.jclear) return call('clearJiraUser', b.dataset.jclear, false).then(renderJira).catch(fail)
