@@ -243,6 +243,7 @@ details summary { cursor: pointer; color: var(--rh-text-2); }
     <button role="tab" data-tab="keys" aria-selected="false">API keys</button>
     <button role="tab" data-tab="jira" aria-selected="false" hidden>Jira</button>
     <button role="tab" data-tab="games" aria-selected="false" hidden>Games</button>
+    <button role="tab" data-tab="pipeline" aria-selected="false" hidden>Pipeline</button>
     <button role="tab" data-tab="log" aria-selected="false">Log</button>
   </div>
   <section id="tab-people"></section>
@@ -250,6 +251,7 @@ details summary { cursor: pointer; color: var(--rh-text-2); }
   <section id="tab-keys" hidden></section>
   <section id="tab-jira" hidden></section>
   <section id="tab-games" hidden></section>
+  <section id="tab-pipeline" hidden></section>
   <section id="tab-log" hidden></section>
 </main>
 
@@ -484,8 +486,9 @@ document.querySelector('.tabs').addEventListener('click', function (ev) {
 })
 function showTab(t) {
   document.querySelectorAll('.tabs button').forEach(function (b) { b.setAttribute('aria-selected', b.dataset.tab === t ? 'true' : 'false') })
-  ;['people', 'usage', 'keys', 'jira', 'games', 'log'].forEach(function (x) { $('tab-' + x).hidden = x !== t })
+  ;['people', 'usage', 'keys', 'jira', 'games', 'pipeline', 'log'].forEach(function (x) { $('tab-' + x).hidden = x !== t })
   if (t === 'games') renderGames()
+  if (t === 'pipeline') renderPipelineHost()
   if (t === 'usage' && !S.usage) loadUsage()
   if (t === 'jira') loadJira()
   if (t === 'log') loadAudit()
@@ -515,7 +518,7 @@ function renderPeople() {
     '</div>'
   html += '<div class="bar">' + (d.hasDam ? '<label class="dim" for="rpany">Creative report</label><select id="rpany"><option value="1"' + (d.settings.reportAnyone ? ' selected' : '') + '>Anyone with a ' + esc(d.org) + ' account</option><option value="0"' + (d.settings.reportAnyone ? '' : ' selected') + '>Only people with Report ticked</option></select>' : '') +
     '<span class="grow"></span><input type="search" id="find" placeholder="Find" style="width:180px"></div>'
-  html += '<div class="card scroll"><table class="ppl"><thead><tr><th>Person</th><th>Access</th>' + (dam ? '<th class="c">Analytics</th><th class="c">Report</th>' : '') + '<th class="c">Local app</th><th class="c" title="The Creative Command Center — yours until you tick someone">CCC</th><th class="c" title="Gets Growth Daily, the daily newsletter">Growth Daily</th>' + (dam ? '<th>DAM groups</th>' : '') + '<th>Modules</th><th class="hide-sm">Last seen</th><th></th></tr></thead><tbody id="ppl">'
+  html += '<div class="card scroll"><table class="ppl"><thead><tr><th>Person</th><th>Access</th>' + (dam ? '<th class="c">Analytics</th><th class="c">Report</th>' : '') + '<th class="c">Local app</th><th class="c" title="The Creative Command Center — yours until you tick someone">CCC</th><th class="c" title="Gets Growth Daily, the daily newsletter">Growth Daily</th>' + (d.orgId === 'tsg' ? '<th class="c" title="Asks the Pipeline for work in Chrome or the phone app, and reviews and approves their own orders">Pipeline</th><th class="c" title="Sees and decides on every Pipeline order">Pipeline: all</th><th class="c" title="Can send work from the phone app and the Pipeline page to their own Rabbit Hole computers, not only the RH Server">Own computers</th>' : '') + (dam ? '<th>DAM groups</th>' : '') + '<th>Modules</th><th class="hide-sm">Last seen</th><th></th></tr></thead><tbody id="ppl">'
   list.forEach(function (p, i) {
     var seen = p.seen ? when(p.seen.at) + (p.seen.v ? ' <span class="mono dim">' + esc(p.seen.v) + '</span>' : '') : '<span class="dim">never</span>'
     var who = '<td class="who"><b>' + esc(p.name || p.e.split('@')[0]) + (p.owner ? ' <span class="pill admin">Owner</span>' : '') + (p.status === 'suspended' ? ' <span class="pill off">Suspended</span>' : '') + '</b><span>' + esc(p.e) + '</span></td>'
@@ -532,6 +535,7 @@ function renderPeople() {
     html += '<tr data-i="' + i + '">' + who +
       '<td><select data-level="' + i + '" aria-label="Access for ' + esc(p.e) + '">' + ['none', 'user', 'power', 'admin'].filter(function (l) { return dam || l !== 'none' || p.level === 'none' }).map(function (l) { return '<option value="' + l + '"' + (p.level === l ? ' selected' : '') + '>' + LEVEL_LABEL[l] + '</option>' }).join('') + '</select></td>' +
       (dam ? box('an') + box('rp') : '') + box('app') + tick('cc', 'Creative Command Center (CCC)') + tick('nl', 'Growth Daily newsletter') +
+      (d.orgId === 'tsg' ? (adm ? '<td class="c"><input type="checkbox" checked disabled title="Admins have the whole Pipeline" aria-label="Pipeline for ' + esc(p.e) + '"></td><td class="c"><input type="checkbox" checked disabled title="Admins see and decide on every order" aria-label="Pipeline: all for ' + esc(p.e) + '"></td><td class="c"><input type="checkbox" checked disabled title="Admins can use their own computers" aria-label="Own computers for ' + esc(p.e) + '"></td>' : tick('pr', 'Pipeline') + tick('pa', 'Pipeline: all') + tick('pl', 'Own computers')) : '') +
       (dam ? '<td><div class="chips">' + (adm || p.level === 'power' ? '<span class="dim">every folder</span>' : gchips) + '</div></td>' : '') +
       '<td>' + (appOn(p) ? '<button class="lnk" data-mods="' + i + '">' + (Array.isArray(p.m) ? 'Custom · ' + p.m.length : 'The level’s · ' + modsOf(p).length) + '</button>' : '<span class="dim">no app</span>') + '</td>' +
       '<td class="hide-sm">' + seen + '</td>' +
@@ -842,8 +846,29 @@ function apply(d) {
   var jt = document.querySelector('.tabs button[data-tab="jira"]'); if (jt) jt.hidden = !d.jira
   // Games: TSG's (the organisation whose Studio projects can share with the TSG Elements library).
   var gt = document.querySelector('.tabs [data-tab="games"]'); if (gt) gt.hidden = d.orgId !== 'tsg'
+  var pt = document.querySelector('.tabs [data-tab="pipeline"]'); if (pt) pt.hidden = d.orgId !== 'tsg'
   S.games = null
   renderPeople(); renderKeys()
+}
+// ── Pipeline: the team's host (Phone.gs) ─────────────────────────────────────
+// One Rabbit Hole makes the team's Pipeline work (Gasper, 2026-10-18: "my PC will make them, then upload to GDrive").
+function renderPipelineHost(code) {
+  var el = $('tab-pipeline')
+  el.innerHTML = '<div class="empty">Loading…</div>'
+  call('phoneHostState').then(function (st) {
+    var h = st && st.host, when = function (s) { return s ? new Date(s).toLocaleString() : 'not yet' }
+    var html = '<div class="card"><h3 style="margin:0 0 6px">The team\u2019s host</h3>' +
+      '<p class="dim" style="margin:0 0 12px">The RH Server: the Rabbit Hole that makes everyone\u2019s Pipeline requests. People ticked <b>Own computers</b> can also pick their own Rabbit Holes in the app and on the page. People ticked <b>Pipeline</b> on the People tab ask for work and review and approve their own orders in Chrome or the phone app; <b>Pipeline: all</b> (and admins) see and decide on every order. Finished work goes to the host\u2019s Drive and the delivery folder is shared with whoever asked.</p>' +
+      (h ? '<p><b>' + esc(h.name) + '</b> \u00b7 connected ' + esc(when(h.at)) + ' by ' + esc(h.by) + ' \u00b7 last heard from ' + esc(when(h.seen)) + '</p>' +
+        '<div class="bar"><button class="btn danger" id="hostOff">Disconnect</button></div>'
+        : '<p>No host yet: requests wait until one is connected.</p>') +
+      (code ? '<div class="card" style="margin-top:12px"><p style="margin:0 0 6px">In Rabbit Hole on the host computer: <b>Pipeline \u2192 Phone \u2192 Make this computer the team\u2019s host</b>, and type:</p><p style="font:700 30px/1.2 ui-monospace,monospace;letter-spacing:.15em;margin:4px 0">' + esc(code.code.slice(0, 4) + ' ' + code.code.slice(4)) + '</p><p class="dim" style="margin:0">Works once, for ten minutes.</p></div>'
+        : '<div class="bar"><button class="btn" id="hostOn">' + (h ? 'Connect another computer instead' : 'Connect a host computer') + '</button></div>') +
+      '<p class="dim" style="margin-top:14px">The Pipeline page for the team: <a href="' + esc(st.url) + '" target="_blank">' + esc(st.url) + '</a></p></div>'
+    el.innerHTML = html
+    var on = $('hostOn'); if (on) on.onclick = function () { call('phoneHostCode').then(renderPipelineHost).catch(fail) }
+    var off = $('hostOff'); if (off) off.onclick = function () { if (confirm('Disconnect ' + h.name + '? Pipeline requests wait until a host is connected again.')) call('phoneHostDisconnect').then(function () { renderPipelineHost() }).catch(fail) }
+  }).catch(function (e) { el.innerHTML = '<div class="empty">' + esc(String(e && e.message || e)) + '</div>' })
 }
 function reload() { return call('getAdmin').then(apply) }
 window.addEventListener('beforeunload', function (ev) { if (S.dirty) { ev.preventDefault(); ev.returnValue = '' } })
