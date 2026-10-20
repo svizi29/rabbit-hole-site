@@ -859,6 +859,36 @@ function apply(d) {
 }
 // ── Pipeline: the team's host (Phone.gs) ─────────────────────────────────────
 // One Rabbit Hole makes the team's Pipeline work (Gasper, 2026-10-18: "my PC will make them, then upload to GDrive").
+// ── Pipeline teams: who belongs to which team, for the filters on the Pipeline page and the phone (2026-10-20) ──
+function renderPipeTeams(parent) {
+  var box = document.createElement('div')
+  box.className = 'card'
+  box.innerHTML = '<div class="empty">Loading the teams…</div>'
+  parent.appendChild(box)
+  call('getPipeTeams').then(function (r) {
+    S.pipeTeams = r.teams.map(function (t) { return { id: t.id, name: t.name, members: t.members.slice() } })
+    S.pipePeople = r.people.slice().sort(function (a, b) { return (a.name || a.e).localeCompare(b.name || b.e) })
+    drawTeams()
+  }).catch(function (e) { box.innerHTML = '<div class="empty">' + esc(String(e && e.message || e)) + '</div>' })
+  function drawTeams() {
+    var teams = S.pipeTeams
+    box.innerHTML = '<h3 style="margin:0 0 6px">Teams</h3><p class="dim" style="margin:0 0 12px">Put people in teams (UA, ASO, creative production…) to filter the Pipeline page and the phone app by team or by person. Teams change nobody\u2019s access.</p>' +
+      teams.map(function (t, i) {
+        return '<div style="border:1px solid var(--line,#2a2a30);border-radius:10px;padding:10px;margin-bottom:10px">' +
+          '<div class="row"><input data-tname="' + i + '" value="' + esc(t.name) + '" maxlength="40" style="font-weight:600"> <span class="dim">' + t.members.length + ' people</span> <button class="btn ghost" data-tdel="' + i + '">Remove team</button></div>' +
+          '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:4px 12px;margin-top:8px">' +
+          S.pipePeople.map(function (p) { return '<label style="display:flex;gap:6px;align-items:center;font-size:13px"><input type="checkbox" data-tm="' + i + '" value="' + esc(p.e) + '"' + (t.members.indexOf(p.e) >= 0 ? ' checked' : '') + '> ' + esc(p.name || p.e) + '</label>' }).join('') +
+          '</div></div>'
+      }).join('') +
+      '<div class="row"><input id="tnew" placeholder="New team, e.g. UA team" maxlength="40"> <button class="btn ghost" id="tadd">Add team</button> <button class="btn" id="tsave">Save teams</button></div>'
+    box.querySelectorAll('[data-tname]').forEach(function (x) { x.oninput = function () { teams[+x.dataset.tname].name = x.value } })
+    box.querySelectorAll('[data-tdel]').forEach(function (x) { x.onclick = function () { teams.splice(+x.dataset.tdel, 1); drawTeams() } })
+    box.querySelectorAll('[data-tm]').forEach(function (x) { x.onchange = function () { var m = teams[+x.dataset.tm].members, i = m.indexOf(x.value); if (x.checked && i < 0) m.push(x.value); if (!x.checked && i >= 0) m.splice(i, 1) } })
+    $('tadd').onclick = function () { var v = $('tnew').value.trim(); if (v) { teams.push({ name: v, members: [] }); drawTeams() } }
+    $('tsave').onclick = function () { call('savePipeTeams', teams).then(function (list) { S.pipeTeams = list; drawTeams(); toast('Teams saved') }).catch(fail) }
+  }
+}
+
 function renderPipelineHost() {
   var el = $('tab-pipeline')
   el.innerHTML = '<div class="empty">Loading…</div>'
@@ -875,6 +905,7 @@ function renderPipelineHost() {
     el.innerHTML = html
     var pm = $('pipeMail'); if (pm) pm.onchange = function () { call('phoneMailSet', pm.checked).then(function (on) { toast(on ? 'Pipeline emails on' : 'Pipeline emails off') }).catch(function (e) { pm.checked = !pm.checked; fail(e) }) }
     var off = $('hostOff'); if (off) off.onclick = function () { if (confirm('Disconnect ' + h.name + '? Pipeline requests wait until a host is connected again.')) call('phoneHostDisconnect').then(function () { renderPipelineHost() }).catch(fail) }
+    renderPipeTeams(el)
   }).catch(function (e) { el.innerHTML = '<div class="empty">' + esc(String(e && e.message || e)) + '</div>' })
 }
 function reload() { return call('getAdmin').then(apply) }
