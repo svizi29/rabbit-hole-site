@@ -732,6 +732,8 @@ function renderGames() {
   }).join('')
   el.innerHTML = '<div class="card"><p class="muted">The game a Studio project is for. Only projects with a game share their finals with the TSG Elements library; ' +
     '<b>Other</b> is always offered and never shares. A retired game stays on its old projects and is no longer offered for new ones. Games are never removed.</p>' +
+    // What syncs (Gasper, 2026-10-20: "I pick which brands, which games, products get synced … anybody can have an offline brand").
+    '<p class="muted">Games on this list sync to everyone\u2019s Rabbit Hole (a private one only to the people who have it). A brand whose game is not on the list stays on the computer that made it, and its name never leaves it.</p>' +
     '<table><thead><tr><th>Game</th><th>Id</th><th>Ticket codes</th><th></th><th>Access</th><th></th></tr></thead><tbody>' + rows + '<tr><td colspan="6" class="muted">Other (always there)</td></tr></tbody></table>' +
     '<p class="muted">Every game is everyone\u2019s. A <b>private</b> game is only yours and the people you list: nobody else sees it, its projects or its Pipeline orders, and it never goes to the team library.' + (own ? '' : ' Only the owner makes a game private.') + '</p>' +
     '<div class="row"><input id="gnew" placeholder="Add a game" maxlength="40"> <button class="btn ghost" id="gadd">Add</button> <button class="btn" id="gsave">Save games</button></div></div>'
