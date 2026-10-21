@@ -325,7 +325,7 @@ details summary { cursor: pointer; color: var(--rh-text-2); }
     <button role="tab" data-tab="games" aria-selected="false" hidden>Games</button>
     <button role="tab" data-tab="pipeline" aria-selected="false" hidden>Pipeline</button>
     <button role="tab" data-tab="log" aria-selected="false">Log</button>
-    <button role="tab" data-tab="future" aria-selected="false" hidden title="Only you see this tab">Future development</button>
+    <button role="tab" data-tab="future" aria-selected="false" hidden title="Only the people ticked Future on the People tab see this">Future development</button>
   </div>
   <section id="tab-people"></section>
   <section id="tab-usage" hidden></section>
@@ -602,12 +602,12 @@ function renderPeople() {
     '</div>'
   html += '<div class="bar">' + (d.hasDam ? '<label class="dim" for="rpany">Creative report</label><select id="rpany"><option value="1"' + (d.settings.reportAnyone ? ' selected' : '') + '>Anyone with a ' + esc(d.org) + ' account</option><option value="0"' + (d.settings.reportAnyone ? '' : ' selected') + '>Only people with Report ticked</option></select>' : '') +
     '<span class="grow"></span><input type="search" id="find" placeholder="Find" style="width:180px"></div>'
-  html += '<div class="card scroll"><table class="ppl"><thead><tr><th>Person</th><th>Access</th>' + (dam ? '<th class="c">Analytics</th><th class="c">Report</th>' : '') + '<th class="c">Local app</th><th class="c" title="The Creative Command Center — yours until you tick someone">CCC</th><th class="c" title="Gets Growth Daily, the daily newsletter">Growth Daily</th>' + (d.orgId === 'tsg' ? '<th class="c" title="Asks the Pipeline for work in Chrome or the phone app, and reviews and approves their own orders">Pipeline</th><th class="c" title="Sees and decides on every Pipeline order">Pipeline: all</th><th class="c" title="Can send work from the phone app and the Pipeline page to their own Rabbit Hole computers, not only the RH Server">Own computers</th>' : '') + (dam ? '<th>DAM groups</th>' : '') + '<th>Modules</th><th class="hide-sm">Last seen</th><th></th></tr></thead><tbody id="ppl">'
+  html += '<div class="card scroll"><table class="ppl"><thead><tr><th>Person</th><th>Access</th>' + (dam ? '<th class="c">Analytics</th><th class="c">Report</th>' : '') + '<th class="c">Local app</th><th class="c" title="The Creative Command Center — yours until you tick someone">CCC</th><th class="c" title="Gets Growth Daily, the daily newsletter">Growth Daily</th>' + (d.orgId === 'tsg' ? '<th class="c" title="Asks the Pipeline for work in Chrome or the phone app, and reviews and approves their own orders">Pipeline</th><th class="c" title="Sees and decides on every Pipeline order">Pipeline: all</th><th class="c" title="Can send work from the phone app and the Pipeline page to their own Rabbit Hole computers, not only the RH Server">Own computers</th><th class="c" title="Sees Future development, the creative growth plan, here and in the iPhone app — yours until you tick someone">Future</th>' : '') + (dam ? '<th>DAM groups</th>' : '') + '<th>Modules</th><th class="hide-sm">Last seen</th><th></th></tr></thead><tbody id="ppl">'
   list.forEach(function (p, i) {
     var seen = p.seen ? when(p.seen.at) + (p.seen.v ? ' <span class="mono dim">' + esc(p.seen.v) + '</span>' : '') : '<span class="dim">never</span>'
     var who = '<td class="who"><b>' + esc(p.name || p.e.split('@')[0]) + (p.owner ? ' <span class="pill admin">Owner</span>' : '') + (p.status === 'suspended' ? ' <span class="pill off">Suspended</span>' : '') + '</b><span>' + esc(p.e) + '</span></td>'
     if (p.owner) {
-      html += '<tr data-i="' + i + '">' + who + '<td><span class="pill admin">Admin</span></td>' + (dam ? '<td class="c">✓</td><td class="c">✓</td>' : '') + '<td class="c">✓</td><td class="c">✓</td><td class="c">✓</td>' + (dam ? '<td class="dim">every folder</td>' : '') +
+      html += '<tr data-i="' + i + '">' + who + '<td><span class="pill admin">Admin</span></td>' + (dam ? '<td class="c">✓</td><td class="c">✓</td>' : '') + '<td class="c">✓</td><td class="c">✓</td><td class="c">✓</td>' + (d.orgId === 'tsg' ? '<td class="c">✓</td><td class="c">✓</td><td class="c">✓</td><td class="c">✓</td>' : '') + (dam ? '<td class="dim">every folder</td>' : '') +
         '<td><button class="lnk" data-mods="' + i + '">' + (Array.isArray(p.m) ? 'Custom · ' + p.m.length : 'Everything') + '</button></td><td class="hide-sm">' + seen + '</td><td class="dim">can’t be removed</td></tr>'
       return
     }
@@ -619,7 +619,7 @@ function renderPeople() {
     html += '<tr data-i="' + i + '">' + who +
       '<td><select data-level="' + i + '" aria-label="Access for ' + esc(p.e) + '">' + ['none', 'user', 'power', 'admin'].filter(function (l) { return dam || l !== 'none' || p.level === 'none' }).map(function (l) { return '<option value="' + l + '"' + (p.level === l ? ' selected' : '') + '>' + LEVEL_LABEL[l] + '</option>' }).join('') + '</select></td>' +
       (dam ? box('an') + box('rp') : '') + box('app') + tick('cc', 'Creative Command Center (CCC)') + tick('nl', 'Growth Daily newsletter') +
-      (d.orgId === 'tsg' ? (adm ? '<td class="c"><input type="checkbox" checked disabled title="Admins have the whole Pipeline" aria-label="Pipeline for ' + esc(p.e) + '"></td><td class="c"><input type="checkbox" checked disabled title="Admins see and decide on every order" aria-label="Pipeline: all for ' + esc(p.e) + '"></td><td class="c"><input type="checkbox" checked disabled title="Admins can use their own computers" aria-label="Own computers for ' + esc(p.e) + '"></td>' : tick('pr', 'Pipeline') + tick('pa', 'Pipeline: all') + tick('pl', 'Own computers')) : '') +
+      (d.orgId === 'tsg' ? (adm ? '<td class="c"><input type="checkbox" checked disabled title="Admins have the whole Pipeline" aria-label="Pipeline for ' + esc(p.e) + '"></td><td class="c"><input type="checkbox" checked disabled title="Admins see and decide on every order" aria-label="Pipeline: all for ' + esc(p.e) + '"></td><td class="c"><input type="checkbox" checked disabled title="Admins can use their own computers" aria-label="Own computers for ' + esc(p.e) + '"></td>' : tick('pr', 'Pipeline') + tick('pa', 'Pipeline: all') + tick('pl', 'Own computers')) + tick('fd', 'Future development') : '') +
       (dam ? '<td><div class="chips">' + (adm || p.level === 'power' ? '<span class="dim">every folder</span>' : gchips) + '</div></td>' : '') +
       '<td>' + (appOn(p) ? '<button class="lnk" data-mods="' + i + '">' + (Array.isArray(p.m) ? 'Custom · ' + p.m.length : 'The level’s · ' + modsOf(p).length) + '</button>' : '<span class="dim">no app</span>') + '</td>' +
       '<td class="hide-sm">' + seen + '</td>' +
@@ -940,8 +940,8 @@ function apply(d) {
   // Games: TSG's (the organisation whose Studio projects can share with the TSG Elements library).
   var gt = document.querySelector('.tabs [data-tab="games"]'); if (gt) gt.hidden = d.orgId !== 'tsg'
   var pt = document.querySelector('.tabs [data-tab="pipeline"]'); if (pt) pt.hidden = d.orgId !== 'tsg'
-  // Future development: the owner's alone for now (Gasper, 2026-10-21), and only where this admin carries the plan
-  var ft = document.querySelector('.tabs [data-tab="future"]'); if (ft) ft.hidden = !(d.future && d.me === d.owner && d.orgId === 'tsg')
+  // Future development: the owner's, and whoever he ticks "Future" on the People tab (2026-10-21); only where this admin carries the plan
+  var ft = document.querySelector('.tabs [data-tab="future"]'); if (ft) ft.hidden = !(d.future && d.orgId === 'tsg')
   S.games = null
   renderPeople(); renderKeys()
 }
@@ -1093,7 +1093,7 @@ function renderFuture() {
 function fxOverview(p) {
   var sm = p.summary, months = p.launchSeries.th.map(function (r) { return r.m })
   var get = function (k, i) { var r = p.launchSeries[k][i]; return r ? r.n : 0 }
-  var html = '<section class="fx-hero"><span class="rh-eyebrow">Future development · ' + esc(p.period) + ' · only you see this tab</span>' +
+  var html = '<section class="fx-hero"><span class="rh-eyebrow">Future development · ' + esc(p.period) + ' · only the people ticked Future see this</span>' +
     '<h2>' + esc(sm.headline) + '</h2><p class="fx-lede">' + esc(sm.lede) + '</p></section>'
   html += fxStats(sm.stats)
   html += '<div class="card fx-pad fx-rec"><span class="rh-eyebrow">My recommendation</span><p>' + esc(sm.recommendation) + '</p></div>'
