@@ -182,6 +182,86 @@ details summary { cursor: pointer; color: var(--rh-text-2); }
   main { padding: 16px 16px 80px; }
   .hide-sm { display: none; }
 }
+/* Future development: the owner's creative growth plan */
+.fx { display: flex; flex-direction: column; gap: 24px; }
+.fx-nav { position: sticky; top: 55px; z-index: 3; display: flex; gap: 6px; overflow-x: auto; padding: 8px 0; background: var(--rh-ink); scrollbar-width: none; }
+.fx-nav::-webkit-scrollbar { display: none; }
+.fx .stats { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+@media (min-width: 1000px) { .fx .stats.n5 { grid-template-columns: repeat(5, minmax(0, 1fr)); }  }
+@media (min-width: 1180px) { .fx .stats.n6 { grid-template-columns: repeat(6, minmax(0, 1fr)); } }
+.fx .stat .rh-num { font-size: 24px; line-height: 1.15; }
+@media (max-width: 560px) { .fx .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.fx-nav button { flex: none; border: 1px solid var(--rh-line-2); background: var(--rh-s1); color: var(--rh-text-3); border-radius: 999px; padding: 6px 12px; cursor: pointer; font-weight: 600; font-size: 13px; }
+.fx-nav button:hover { color: var(--rh-text); }
+.fx-nav button[aria-pressed="true"] { background: var(--rh-accent-soft); color: var(--rh-accent-text); border-color: transparent; }
+.fx-nav button:focus-visible { outline: 2px solid var(--rh-accent-2); outline-offset: 1px; }
+.fx-sw { display: inline-block; width: 8px; height: 8px; border-radius: 2px; margin-right: 7px; vertical-align: 1px; }
+.fx-hero { display: flex; flex-direction: column; gap: 10px; }
+.fx-hero h2 { font: 800 clamp(28px, 4.2vw, 46px)/1.04 var(--rh-display); letter-spacing: -0.025em; margin: 0; max-width: 22ch; text-wrap: balance; }
+.fx-hero .fx-game { font: 800 clamp(26px, 3.4vw, 38px)/1.08 var(--rh-display); letter-spacing: -0.02em; margin: 0; }
+.fx-lede { font-size: 16px; line-height: 1.6; color: var(--rh-text-2); max-width: 74ch; margin: 0; }
+.fx-sec { display: flex; flex-direction: column; gap: 12px; }
+.fx-h { font: 700 21px/1.2 var(--rh-display); letter-spacing: -0.012em; margin: 0; text-wrap: balance; }
+.fx-sub { color: var(--rh-text-3); margin: -6px 0 0; max-width: 80ch; }
+.fx-pad { padding: 16px 18px; }
+.fx-rec p { margin: 8px 0 0; font-size: 15px; line-height: 1.55; max-width: 78ch; }
+.fx-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr)); gap: 12px; }
+.fx-card h3 { font: 700 16px/1.3 var(--rh-display); margin: 0 0 6px; text-wrap: balance; }
+.fx-card > p { margin: 0 0 12px; color: var(--rh-text-2); }
+.fx-ev { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 7px; }
+.fx-ev li { display: grid; grid-template-columns: 46px 1fr; gap: 10px; font-size: 13px; color: var(--rh-text-2); }
+.fx-code { font: 600 11px/1 var(--rh-mono); padding: 4px 0 5px; border-radius: 5px; background: var(--rh-s3); color: var(--rh-text); text-align: center; align-self: start; box-shadow: inset 0 -2px 0 var(--g, var(--rh-line-3)); }
+.fx-stat-sub { display: block; color: var(--rh-text-3); font-size: 12px; margin-top: 2px; }
+.stat.good .rh-num { color: var(--rh-good); }
+.stat.bad .rh-num { color: var(--rh-bad); }
+.fx-charts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+@media (min-width: 1100px) { .fx-charts { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+@media (max-width: 560px) { .fx-charts { grid-template-columns: 1fr; } }
+.fx-chart { padding: 14px 14px 10px; display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.fx-chart h4 { margin: 0; font: 600 13px/1.3 var(--rh-body); }
+.fx-chart svg { width: 100%; height: auto; display: block; }
+.fx-ax text { fill: var(--rh-text-3); font: 500 11px var(--rh-mono); }
+.fx-ax line { stroke: var(--rh-line); }
+.fx-lbl { fill: var(--rh-text-2); font: 600 11px var(--rh-mono); }
+.fx-hit { fill: transparent; }
+.fx-hit:hover { fill: rgba(255, 255, 255, 0.035); }
+.fx-legend { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 12.5px; color: var(--rh-text-2); }
+.fx-legend i { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 6px; vertical-align: -1px; }
+.fx-tip { position: fixed; z-index: 40; pointer-events: none; background: var(--rh-s4); border: 1px solid var(--rh-line-2); border-radius: 8px; padding: 8px 10px; font-size: 12px; box-shadow: 0 10px 28px rgba(0, 0, 0, 0.45); min-width: 140px; }
+.fx-tip[hidden] { display: none; }
+.fx-tip b { display: block; font: 500 10.5px/1.3 var(--rh-mono); color: var(--rh-text-3); text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 5px; }
+.fx-tip .r { display: flex; justify-content: space-between; gap: 14px; font-variant-numeric: tabular-nums; }
+.fx-bul { margin: 0; padding-left: 18px; display: flex; flex-direction: column; gap: 8px; color: var(--rh-text-2); max-width: 90ch; }
+.fx-bul li::marker { color: var(--rh-text-4); }
+.fx-levers { display: flex; flex-direction: column; gap: 10px; }
+.fx-lever { padding: 14px 16px; display: grid; grid-template-columns: 30px 1fr; gap: 0 12px; }
+.fx-lever .n { font: 700 18px/1.25 var(--rh-display); color: var(--rh-accent-text); font-variant-numeric: tabular-nums; }
+.fx-lever h4 { margin: 0 0 10px; font: 700 15.5px/1.3 var(--rh-display); text-wrap: balance; }
+.fx-lever dl { margin: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 210px), 1fr)); gap: 10px 18px; }
+.fx-lever dt { font: 500 10.5px/1.3 var(--rh-mono); text-transform: uppercase; letter-spacing: 0.07em; color: var(--rh-text-3); margin-bottom: 3px; }
+.fx-lever dd { margin: 0; font-size: 13px; line-height: 1.5; color: var(--rh-text-2); }
+.fx-lever dd.rh { color: var(--rh-accent-text); }
+.fx-ms ul { margin: 0; padding-left: 18px; display: flex; flex-direction: column; gap: 6px; color: var(--rh-text-2); font-size: 13.5px; }
+.fx-ms h3 { display: flex; align-items: center; gap: 8px; }
+.fx-moves { display: flex; flex-direction: column; }
+.fx-move { display: grid; grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.6fr) minmax(0, 1fr); gap: 6px 22px; padding: 14px 18px; border-bottom: 1px solid var(--rh-line); }
+.fx-move:last-child { border-bottom: 0; }
+.fx-move b { font: 700 15px/1.3 var(--rh-display); }
+.fx-move .what { color: var(--rh-text-2); font-size: 13.5px; }
+.fx-move .rh { color: var(--rh-accent-text); font-size: 13px; }
+.fx-road { display: grid; grid-template-columns: repeat(6, minmax(230px, 1fr)); gap: 10px; overflow-x: auto; padding-bottom: 6px; }
+.fx-month { padding: 14px 15px; display: flex; flex-direction: column; gap: 10px; }
+.fx-month h3 { margin: 0; font: 700 18px/1.2 var(--rh-display); }
+.fx-month .focus { color: var(--rh-accent-text); font-size: 13px; margin-top: -6px; }
+.fx-item { display: flex; flex-direction: column; gap: 3px; font-size: 13px; color: var(--rh-text-2); }
+.fx-track { font: 500 10px/1.2 var(--rh-mono); text-transform: uppercase; letter-spacing: 0.08em; color: var(--rh-text-3); }
+.fx-note { color: var(--rh-text-3); font-size: 12.5px; max-width: 90ch; margin: 0; }
+.fx table td { vertical-align: top; }
+.fx details summary { font-size: 13px; padding: 4px 0; }
+@media (max-width: 760px) {
+  .fx-nav { top: 51px; }
+  .fx-move { grid-template-columns: 1fr; }
+}
 </style>
 <style>
 .gate { position: fixed; inset: 0; z-index: 40; display: flex; align-items: center; justify-content: center; padding: 16px; background: radial-gradient(900px 500px at 50% -10%, rgba(124, 92, 255, 0.16), transparent 70%), var(--rh-ink); }
@@ -245,6 +325,7 @@ details summary { cursor: pointer; color: var(--rh-text-2); }
     <button role="tab" data-tab="games" aria-selected="false" hidden>Games</button>
     <button role="tab" data-tab="pipeline" aria-selected="false" hidden>Pipeline</button>
     <button role="tab" data-tab="log" aria-selected="false">Log</button>
+    <button role="tab" data-tab="future" aria-selected="false" hidden title="Only you see this tab">Future development</button>
   </div>
   <section id="tab-people"></section>
   <section id="tab-usage" hidden></section>
@@ -253,7 +334,9 @@ details summary { cursor: pointer; color: var(--rh-text-2); }
   <section id="tab-games" hidden></section>
   <section id="tab-pipeline" hidden></section>
   <section id="tab-log" hidden></section>
+  <section id="tab-future" class="fx" hidden></section>
 </main>
+<div class="fx-tip" id="fxTip" hidden></div>
 
 <div class="scrim" id="scrim" hidden><div class="panel" role="dialog" aria-modal="true" aria-labelledby="pTitle" id="panel"></div></div>
 <div class="toast" id="toast" role="status" hidden></div>
@@ -486,12 +569,13 @@ document.querySelector('.tabs').addEventListener('click', function (ev) {
 })
 function showTab(t) {
   document.querySelectorAll('.tabs button').forEach(function (b) { b.setAttribute('aria-selected', b.dataset.tab === t ? 'true' : 'false') })
-  ;['people', 'usage', 'keys', 'jira', 'games', 'pipeline', 'log'].forEach(function (x) { $('tab-' + x).hidden = x !== t })
+  ;['people', 'usage', 'keys', 'jira', 'games', 'pipeline', 'log', 'future'].forEach(function (x) { $('tab-' + x).hidden = x !== t })
   if (t === 'games') renderGames()
   if (t === 'pipeline') renderPipelineHost()
   if (t === 'usage' && !S.usage) loadUsage()
   if (t === 'jira') loadJira()
   if (t === 'log') loadAudit()
+  if (t === 'future') loadFuture()
 }
 
 // ── People ──
@@ -856,6 +940,8 @@ function apply(d) {
   // Games: TSG's (the organisation whose Studio projects can share with the TSG Elements library).
   var gt = document.querySelector('.tabs [data-tab="games"]'); if (gt) gt.hidden = d.orgId !== 'tsg'
   var pt = document.querySelector('.tabs [data-tab="pipeline"]'); if (pt) pt.hidden = d.orgId !== 'tsg'
+  // Future development: the owner's alone for now (Gasper, 2026-10-21), and only where this admin carries the plan
+  var ft = document.querySelector('.tabs [data-tab="future"]'); if (ft) ft.hidden = !(d.future && d.me === d.owner && d.orgId === 'tsg')
   S.games = null
   renderPeople(); renderKeys()
 }
@@ -913,6 +999,194 @@ function renderPipelineHost() {
     renderPipeTeams(el)
   }).catch(function (e) { el.innerHTML = '<div class="empty">' + esc(String(e && e.message || e)) + '</div>' })
 }
+// ── Future development: the owner's creative growth plan (Code.gs getFuturePlan; the plan itself lives in the vault) ──
+// One hue per game, the dark steps of the validated categorical palette, in this fixed order.
+var FX_COLOR = { th: '#3987e5', woh: '#d95926', mh: '#199e70', fc: '#c98500', hc: '#d55181' }
+var FX_ORDER = ['th', 'woh', 'mh', 'fc', 'hc']
+var FX_CH = {}, fxSeq = 0
+function loadFuture() {
+  if (S.future) return renderFuture()
+  $('tab-future').innerHTML = '<div class="empty">Loading the plan…</div>'
+  call('getFuturePlan').then(function (p) { S.future = p; renderFuture() })
+    .catch(function (e) { $('tab-future').innerHTML = '<div class="empty">' + esc(String(e && e.message || e)) + '</div>' })
+}
+function fxView() { if (!S.fxView) { try { S.fxView = localStorage.getItem('rh-admin-future') || 'overview' } catch (e) { S.fxView = 'overview' } } return S.fxView }
+function fxGo(v) { S.fxView = v; try { localStorage.setItem('rh-admin-future', v) } catch (e) {} renderFuture(); window.scrollTo(0, 0) }
+function fxGame(id) { return S.future.games.filter(function (g) { return g.id === id })[0] }
+function fxMon(m) { return ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'][+m.slice(5, 7) - 1] }
+function fxMonY(m) { return fxMon(m) + ' ' + m.slice(0, 4) }
+function fxUsd(n) { return n >= 1e6 ? '$' + (n / 1e6).toFixed(2).replace(/\.?0+$/, '') + 'M' : n >= 1e3 ? '$' + Math.round(n / 1e3) + 'K' : '$' + n.toFixed(n < 10 ? 2 : 0) }
+function fxPct(v) { return (v * 100).toFixed(1) + '%' }
+function fxNice(max) { var raw = max / 3, p = Math.pow(10, Math.floor(Math.log(raw) / Math.LN10)), f = raw / p; return (f <= 1 ? 1 : f <= 2 ? 2 : f <= 2.5 ? 2.5 : f <= 5 ? 5 : 10) * p }
+// a bar with its data end rounded and its base square on the baseline
+function fxBar(x, y, w, h, r) { r = Math.min(r, w / 2, h); return 'M' + x + ',' + (y + h) + 'V' + (y + r) + 'Q' + x + ',' + y + ' ' + (x + r) + ',' + y + 'H' + (x + w - r) + 'Q' + (x + w) + ',' + y + ' ' + (x + w) + ',' + (y + r) + 'V' + (y + h) + 'Z' }
+// One small chart, one axis: o = { months, kind: bar | line | stack, val(i), keys + get(k, i) for a stack, ref(i) for a dashed target, axis(v), tip(i), color, label }
+function fxChart(o) {
+  var id = 'fx' + (++fxSeq); FX_CH[id] = o
+  var W = o.w || 340, H = o.h || 200, L = 46, R = 12, T = 18, B = 24, iw = W - L - R, ih = H - T - B, n = o.months.length, bw = iw / n
+  var tot = function (i) { return o.kind === 'stack' ? o.keys.reduce(function (a, k) { return a + (o.get(k, i) || 0) }, 0) : o.val(i) }
+  var top = 0
+  for (var i = 0; i < n; i++) { var v = tot(i); if (v != null && v > top) top = v; if (o.ref) { var rv = o.ref(i); if (rv != null && rv > top) top = rv } }
+  var step = fxNice(top || 1); top = Math.max(step, Math.ceil(top / step) * step)
+  var y = function (v) { return T + ih - v / top * ih }, cx = function (i) { return L + bw * i + bw / 2 }
+  var s = '<svg viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="' + esc(o.label) + '"><g class="fx-ax">'
+  for (var t = 0; t <= top + 1e-9; t += step) s += '<line x1="' + L + '" x2="' + (W - R) + '" y1="' + y(t).toFixed(1) + '" y2="' + y(t).toFixed(1) + '"/><text x="' + (L - 7) + '" y="' + (y(t) + 3.5).toFixed(1) + '" text-anchor="end">' + (t ? esc(o.axis(t)) : '0') + '</text>'
+  for (i = 0; i < n; i++) if (n <= 8 || i % 2 === (n - 1) % 2) s += '<text x="' + cx(i).toFixed(1) + '" y="' + (H - 6) + '" text-anchor="middle">' + fxMon(o.months[i]) + '</text>'
+  s += '</g>'
+  var w = Math.min(bw * 0.64, 30)
+  if (o.kind === 'bar') for (i = 0; i < n; i++) { var bv = o.val(i); if (bv) s += '<path d="' + fxBar(cx(i) - w / 2, y(bv), w, y(0) - y(bv), 3) + '" fill="' + o.color + '"/>' }
+  if (o.kind === 'stack') for (i = 0; i < n; i++) {
+    var base = 0, ks = o.keys.filter(function (k) { return o.get(k, i) > 0 })
+    ks.forEach(function (k, j) {
+      var v = o.get(k, i), y0 = y(base) - (base ? 2 : 0), y1 = y(base + v), h = Math.max(0, y0 - y1)
+      s += j === ks.length - 1 ? '<path d="' + fxBar(cx(i) - w / 2, y1, w, h, 3) + '" fill="' + FX_COLOR[k] + '"/>' : '<rect x="' + (cx(i) - w / 2) + '" y="' + y1 + '" width="' + w + '" height="' + h + '" fill="' + FX_COLOR[k] + '"/>'
+      base += v
+    })
+  }
+  if (o.ref) { var rp = []; for (i = 0; i < n; i++) { var r = o.ref(i); if (r != null) rp.push(cx(i).toFixed(1) + ',' + y(r).toFixed(1)) } s += '<polyline fill="none" stroke="var(--rh-text-3)" stroke-width="1.5" stroke-dasharray="4 4" points="' + rp.join(' ') + '"/>' }
+  if (o.kind === 'line') {
+    var pts = []; for (i = 0; i < n; i++) { var lv = o.val(i); if (lv != null) pts.push([cx(i), y(lv)]) }
+    s += '<polyline fill="none" stroke="' + o.color + '" stroke-width="2" stroke-linejoin="round" points="' + pts.map(function (p) { return p[0].toFixed(1) + ',' + p[1].toFixed(1) }).join(' ') + '"/>'
+    pts.forEach(function (p, j) { var end = j === pts.length - 1; s += '<circle cx="' + p[0].toFixed(1) + '" cy="' + p[1].toFixed(1) + '" r="' + (end ? 5 : 4) + '" fill="' + (end ? o.color : 'var(--rh-s1)') + '" stroke="' + o.color + '" stroke-width="2"/>' })
+  }
+  // selective direct labels: the last value, and the peak of a stack
+  var last = n - 1; while (last > 0 && tot(last) == null) last--
+  var lab = [last]; if (o.kind === 'stack') { var pk = 0; for (i = 0; i < n; i++) if (tot(i) > tot(pk)) pk = i; if (pk !== last) lab.push(pk) }
+  lab.forEach(function (i) { var v = tot(i); if (v == null) return; if (o.kind !== 'line' && o.fmt(v).length * 6.8 > bw * 0.95 && [i - 1, i + 1].some(function (j) { return j >= 0 && j < n && tot(j) > v * 0.9 })) return; s += '<text class="fx-lbl" x="' + cx(i).toFixed(1) + '" y="' + (y(v) - 9).toFixed(1) + '" text-anchor="middle">' + esc(o.fmt(v)) + '</text>' })
+  s += '<g data-fxc="' + id + '">'
+  for (i = 0; i < n; i++) s += '<rect class="fx-hit" data-i="' + i + '" x="' + (L + bw * i) + '" y="' + T + '" width="' + bw + '" height="' + ih + '"/>'
+  return s + '</g></svg>'
+}
+function fxHover(ev) {
+  var tip = $('fxTip'), h = ev.target && ev.target.closest && ev.target.closest('[data-fxc] [data-i]')
+  if (!h) { if (!tip.hidden) tip.hidden = true; return }
+  var o = FX_CH[h.parentNode.getAttribute('data-fxc')], i = +h.getAttribute('data-i')
+  tip.innerHTML = '<b>' + esc(fxMonY(o.months[i])) + '</b>' + o.tip(i)
+  tip.hidden = false
+  var x = ev.clientX + 14, y = ev.clientY + 14
+  if (x + tip.offsetWidth > window.innerWidth - 8) x = ev.clientX - tip.offsetWidth - 14
+  if (y + tip.offsetHeight > window.innerHeight - 8) y = ev.clientY - tip.offsetHeight - 14
+  tip.style.left = x + 'px'; tip.style.top = y + 'px'
+}
+document.addEventListener('mousemove', fxHover)
+document.addEventListener('mouseover', fxHover)
+function fxRow(k, v) { return '<div class="r"><span>' + k + '</span><span>' + v + '</span></div>' }
+function fxCode(g) { var x = fxGame(g); return '<span class="fx-code" style="--g:' + FX_COLOR[g] + '">' + esc(x ? x.code : g.toUpperCase()) + '</span>' }
+function fxCodeOf(code) { var g = S.future.games.filter(function (x) { return x.code === code })[0]; return g ? fxCode(g.id) : '<span class="fx-code">' + esc(code) + '</span>' }
+function fxStats(list) { return '<div class="stats n' + list.length + '">' + list.map(function (s) { return '<div class="card stat' + (s.tone ? ' ' + s.tone : '') + '"><span class="rh-eyebrow">' + esc(s.label) + '</span><span class="rh-num">' + esc(s.value) + '</span>' + (s.sub ? '<span class="fx-stat-sub">' + esc(s.sub) + '</span>' : '') + '</div>' }).join('') + '</div>' }
+function fxTable(head, rows) { return '<div class="card scroll"><table><thead><tr>' + head.map(function (h) { return '<th>' + esc(h) + '</th>' }).join('') + '</tr></thead><tbody>' + rows.map(function (r) { return '<tr>' + r.map(function (c) { return '<td>' + c + '</td>' }).join('') + '</tr>' }).join('') + '</tbody></table></div>' }
+
+function renderFuture() {
+  var p = S.future, v = fxView(), el = $('tab-future')
+  if (v !== 'overview' && v !== 'competitors' && v !== 'roadmap' && v !== 'scorecard' && !fxGame(v)) v = S.fxView = 'overview'
+  FX_CH = {}
+  var nav = [['overview', 'Overview']].concat(p.games.map(function (g) { return [g.id, g.name] }), [['competitors', 'Competitors'], ['roadmap', 'Roadmap'], ['scorecard', 'Scorecard and asks']])
+  var html = '<nav class="fx-nav" aria-label="Plan sections">' + nav.map(function (n) {
+    return '<button data-fx="' + n[0] + '" aria-pressed="' + (n[0] === v) + '">' + (FX_COLOR[n[0]] ? '<span class="fx-sw" style="background:' + FX_COLOR[n[0]] + '"></span>' : '') + esc(n[1]) + '</button>'
+  }).join('') + '</nav>'
+  html += v === 'overview' ? fxOverview(p) : v === 'competitors' ? fxCompetitors(p) : v === 'roadmap' ? fxRoadmap(p) : v === 'scorecard' ? fxScorecard(p) : fxGameView(p, fxGame(v))
+  el.innerHTML = html
+  el.querySelectorAll('[data-fx]').forEach(function (b) { b.onclick = function () { fxGo(b.dataset.fx) } })
+}
+
+function fxOverview(p) {
+  var sm = p.summary, months = p.launchSeries.th.map(function (r) { return r.m })
+  var get = function (k, i) { var r = p.launchSeries[k][i]; return r ? r.n : 0 }
+  var html = '<section class="fx-hero"><span class="rh-eyebrow">Future development · ' + esc(p.period) + ' · only you see this tab</span>' +
+    '<h2>' + esc(sm.headline) + '</h2><p class="fx-lede">' + esc(sm.lede) + '</p></section>'
+  html += fxStats(sm.stats)
+  html += '<div class="card fx-pad fx-rec"><span class="rh-eyebrow">My recommendation</span><p>' + esc(sm.recommendation) + '</p></div>'
+  html += '<section class="fx-sec"><h3 class="fx-h">New creatives a month, by game</h3>' +
+    '<div class="card fx-chart">' + fxChart({ months: months, kind: 'stack', keys: FX_ORDER, get: get, w: 900, h: 300, label: 'New creatives a month across the five games, October 2025 to September 2026',
+      axis: function (t) { return String(t) }, fmt: function (t) { return String(t) },
+      tip: function (i) { var t = 0; return FX_ORDER.map(function (k) { t += get(k, i); return fxRow(fxGame(k).code, get(k, i)) }).join('') + fxRow('<b style="all:unset;font-weight:700">All</b>', t) } }) +
+    '<div class="fx-legend">' + FX_ORDER.map(function (k) { return '<span><i style="background:' + FX_COLOR[k] + '"></i>' + esc(fxGame(k).name) + '</span>' }).join('') + '</div>' +
+    '<p class="fx-note">' + esc(sm.launchNote) + '</p>' +
+    '<details><summary>Table</summary>' + fxTable(['Month'].concat(FX_ORDER.map(function (k) { return fxGame(k).code }), ['All']), months.map(function (m, i) { var t = 0; return [fxMonY(m)].concat(FX_ORDER.map(function (k) { t += get(k, i); return get(k, i) }), [t]) })) + '</details></div></section>'
+  html += '<section class="fx-sec"><h3 class="fx-h">What the data says</h3><div class="fx-grid">' + p.findings.map(function (f) {
+    return '<div class="card fx-pad fx-card"><h3>' + esc(f.t) + '</h3><p>' + esc(f.b) + '</p><ul class="fx-ev">' + f.ev.map(function (e) { return '<li>' + fxCodeOf(e[0]) + '<span>' + esc(e[1]) + '</span></li>' }).join('') + '</ul></div>'
+  }).join('') + '</div></section>'
+  html += '<section class="fx-sec"><h3 class="fx-h">The plan in ' + ['', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight'][p.moves.length] + ' moves</h3><div class="card fx-moves">' + p.moves.map(function (m) {
+    return '<div class="fx-move"><b>' + esc(m.t) + '</b><span class="what">' + esc(m.what) + '</span><span class="rh">' + esc(m.rh) + '</span></div>'
+  }).join('') + '</div></section>'
+  html += '<section class="fx-sec"><h3 class="fx-h">Six months from now</h3>' +
+    fxTable(['Game', 'Spend a month', 'CPI', 'D7 ROAS', 'Confidence'], p.targets.map(function (t) {
+      var g = fxGame(t.game)
+      return ['<button class="lnk" data-fx="' + g.id + '">' + esc(g.name) + '</button>', esc(t.spend[0]) + ' <span class="dim">→</span> ' + esc(t.spend[1]), esc(t.cpi[0]) + ' <span class="dim">→</span> ' + esc(t.cpi[1]), esc(t.roas[0]) + ' <span class="dim">→</span> ' + esc(t.roas[1]), '<span class="pill' + (t.conf === 'low' ? ' custom' : '') + '">' + esc(t.conf) + '</span>']
+    })) + '<p class="fx-note">' + esc(p.targetsNote) + '</p></section>'
+  html += '<section class="fx-sec"><h3 class="fx-h">Guardrails</h3><ul class="fx-bul">' + p.guardrails.map(function (g) { return '<li>' + esc(g) + '</li>' }).join('') + '</ul></section>'
+  html += '<section class="fx-sec"><h3 class="fx-h">To discuss</h3><ul class="fx-bul">' + p.discuss.map(function (g) { return '<li>' + esc(g) + '</li>' }).join('') + '</ul></section>'
+  html += '<p class="fx-note">' + esc(p.data) + ' Built ' + esc(p.generated) + '.</p>'
+  return html
+}
+
+function fxGameView(p, g) {
+  var c = FX_COLOR[g.id], months = g.series.map(function (r) { return r.m }), sr = function (k) { return function (i) { return g.series[i][k] } }
+  var lmap = {}; g.launches.forEach(function (r) { lmap[r.m] = r.n })
+  var html = '<section class="fx-hero"><span class="rh-eyebrow"><span class="fx-sw" style="background:' + c + '"></span>' + esc(g.code) + ' · ' + esc(p.period) + '</span><h2 class="fx-game">' + esc(g.name) + '</h2><p class="fx-lede">' + esc(g.headline) + '</p></section>'
+  html += fxStats(g.stats.map(function (s) { return { label: s[0], value: s[1], sub: s[2] } }))
+  var hasRef = g.series.some(function (r) { return r.target != null })
+  html += '<div class="fx-charts">' +
+    '<div class="card fx-chart"><h4>Spend a month</h4>' + fxChart({ months: months, kind: 'bar', val: sr('spend'), color: c, label: g.name + ' spend a month', axis: fxUsd, fmt: fxUsd, tip: function (i) { var r = g.series[i]; return fxRow('Spend', fxUsd(r.spend)) + fxRow('Installs', Math.round(r.installs).toLocaleString('en')) } }) + '</div>' +
+    '<div class="card fx-chart"><h4>CPI</h4>' + fxChart({ months: months, kind: 'line', val: sr('cpi'), color: c, label: g.name + ' cost per install a month', axis: function (t) { return '$' + (t % 1 ? t.toFixed(2) : t) }, fmt: function (t) { return '$' + t.toFixed(2) }, tip: function (i) { return fxRow('CPI', '$' + g.series[i].cpi.toFixed(2)) } }) + '</div>' +
+    '<div class="card fx-chart"><h4>D7 ROAS' + (hasRef ? ' <span class="dim">· dashed: target</span>' : '') + '</h4>' + fxChart({ months: months, kind: 'line', val: sr('roas'), ref: hasRef ? sr('target') : null, color: c, label: g.name + ' D7 ROAS a month', axis: function (t) { return Math.round(t * 100) + '%' }, fmt: fxPct, tip: function (i) { var r = g.series[i]; return fxRow('D7 ROAS', r.roas == null ? '—' : fxPct(r.roas)) + (r.target != null ? fxRow('Target', fxPct(r.target)) : '') } }) + '</div>' +
+    '<div class="card fx-chart"><h4>New creatives</h4>' + fxChart({ months: months, kind: 'bar', val: function (i) { return lmap[months[i]] || 0 }, color: c, label: g.name + ' new creatives a month', axis: function (t) { return String(t) }, fmt: function (t) { return String(t) }, tip: function (i) { return fxRow('New', lmap[months[i]] || 0) } }) + '</div>' +
+    '</div>'
+  html += '<details><summary>Monthly numbers</summary>' + fxTable(['Month', 'Spend', 'Installs', 'CPI', 'D7 ROAS', 'New'], g.series.map(function (r) { return [fxMonY(r.m), fxUsd(r.spend), Math.round(r.installs).toLocaleString('en'), '$' + r.cpi.toFixed(2), r.roas == null ? '—' : fxPct(r.roas), lmap[r.m] || 0] })) + '</details>'
+  html += '<section class="fx-sec"><h3 class="fx-h">What is happening</h3><ul class="fx-bul">' + g.diagnosis.map(function (d) { return '<li>' + esc(d) + '</li>' }).join('') + '</ul></section>'
+  html += '<section class="fx-sec"><h3 class="fx-h">The plan, in order</h3><div class="fx-levers">' + g.levers.map(function (l, i) {
+    return '<div class="card fx-lever"><span class="n">' + (i + 1) + '</span><div><h4>' + esc(l.t) + '</h4><dl>' +
+      '<div><dt>Why</dt><dd>' + esc(l.why) + '</dd></div><div><dt>Expected impact</dt><dd>' + esc(l.impact) + '</dd></div>' +
+      '<div><dt>Proof in 4–8 weeks</dt><dd>' + esc(l.proof) + '</dd></div><div><dt>In Rabbit Hole</dt><dd class="rh">' + esc(l.rh) + '</dd></div></dl></div></div>'
+  }).join('') + '</div></section>'
+  html += '<div class="fx-grid fx-ms"><div class="card fx-pad fx-card"><h3><span class="pill ok">Make</span></h3><ul>' + g.make.map(function (x) { return '<li>' + esc(x) + '</li>' }).join('') + '</ul></div>' +
+    '<div class="card fx-pad fx-card"><h3><span class="pill off">Stop</span></h3><ul>' + g.stop.map(function (x) { return '<li>' + esc(x) + '</li>' }).join('') + '</ul></div></div>'
+  if (g.market) html += '<section class="fx-sec"><h3 class="fx-h">Against the market</h3><ul class="fx-bul">' + g.market.map(function (d) { return '<li>' + esc(d) + '</li>' }).join('') + '</ul>' +
+    (g.borrow ? '<div class="card fx-pad fx-card"><h3>Worth borrowing, behind the ROAS gate</h3><ul class="fx-bul">' + g.borrow.map(function (d) { return '<li>' + esc(d) + '</li>' }).join('') + '</ul></div>' : '') + '</section>'
+  html += '<section class="fx-sec"><h3 class="fx-h">Per network and platform</h3>' + fxTable(['Where', 'What it needs'], g.platforms.map(function (r) { return ['<b>' + esc(r[0]) + '</b>', esc(r[1])] })) + '</section>'
+  html += '<section class="fx-sec"><h3 class="fx-h">Culture, language and season</h3><ul class="fx-bul">' + g.culture.map(function (d) { return '<li>' + esc(d) + '</li>' }).join('') + '</ul></section>'
+  html += '<section class="fx-sec"><h3 class="fx-h">Scorecard</h3>' + fxTable(['KPI', 'Now', 'Month 3', 'Month 6'], g.scorecard.map(function (r) { return ['<b>' + esc(r[0]) + '</b>', esc(r[1]), esc(r[2]), esc(r[3])] })) + '</section>'
+  html += '<p class="fx-note"><b>Read with care:</b> ' + g.caveats.map(esc).join(' ') + '</p>'
+  return html
+}
+
+function fxCompetitors(p) {
+  var c = p.competitors
+  if (!c) return '<div class="empty">The competitor read is still being put together.</div>'
+  var html = '<section class="fx-hero"><span class="rh-eyebrow">Competitors · Sensor Tower ad intelligence</span><h2 class="fx-game">' + esc(c.title || 'What the competition runs') + '</h2>' + (c.lede ? '<p class="fx-lede">' + esc(c.lede) + '</p>' : '') + '</section>'
+  if (c.stats) html += fxStats(c.stats)
+  if (c.themes) html += '<section class="fx-sec"><h3 class="fx-h">Across the market</h3><div class="fx-grid">' + c.themes.map(function (t) { return '<div class="card fx-pad fx-card"><h3>' + esc(t.t) + '</h3><p>' + esc(t.b) + '</p>' + (t.ev ? '<ul class="fx-ev">' + t.ev.map(function (e) { return '<li>' + fxCodeOf(e[0]) + '<span>' + esc(e[1]) + '</span></li>' }).join('') + '</ul>' : '') + '</div>' }).join('') + '</div></section>'
+  if (c.bench) html += '<section class="fx-sec"><h3 class="fx-h">Benchmarks</h3>' + fxTable(c.bench.head, c.bench.rows.map(function (r, i) { return r.map(function (x, j) { return j === 0 ? (i < 5 ? '<b>' + esc(x) + '</b>' : esc(x)) : esc(x) }) })) + '<p class="fx-note">' + esc(c.bench.note) + '</p></section>'
+  ;(c.games || []).forEach(function (cg) {
+    var g = fxGame(cg.game); if (!g) return
+    html += '<section class="fx-sec"><h3 class="fx-h"><span class="fx-sw" style="background:' + FX_COLOR[cg.game] + '"></span>' + esc(g.name) + ' <span class="dim" style="font:500 14px var(--rh-body)">against ' + esc(cg.rivals) + '</span></h3>' +
+      '<ul class="fx-bul">' + (g.market || []).map(function (d) { return '<li>' + esc(d) + '</li>' }).join('') + '</ul>' +
+      (g.borrow ? '<div class="card fx-pad fx-card"><h3>Worth borrowing, behind the ROAS gate</h3><ul class="fx-bul">' + g.borrow.map(function (d) { return '<li>' + esc(d) + '</li>' }).join('') + '</ul></div>' : '') +
+      '<div><button class="lnk" data-fx="' + g.id + '">' + esc(g.name) + '\u2019s plan</button></div></section>'
+  })
+  if (c.watch) html += '<section class="fx-sec"><h3 class="fx-h">To watch</h3><ul class="fx-bul">' + c.watch.map(function (d) { return '<li>' + esc(d) + '</li>' }).join('') + '</ul></section>'
+  if (c.note) html += '<p class="fx-note">' + esc(c.note) + '</p>'
+  return html
+}
+
+function fxRoadmap(p) {
+  var html = '<section class="fx-hero"><span class="rh-eyebrow">Roadmap · ' + esc(p.period) + '</span><h2 class="fx-game">Month by month</h2><p class="fx-lede">What happens when. The first two months are all in creative’s own hands; culturalisation starts when BI delivers the country split.</p></section>'
+  html += '<div class="fx-road">' + p.roadmap.map(function (m) {
+    return '<div class="card fx-month"><h3>' + esc(m.m) + '</h3><span class="focus">' + esc(m.focus) + '</span>' + m.items.map(function (it) { return '<div class="fx-item"><span class="fx-track">' + esc(it[0]) + '</span><span>' + esc(it[1]) + '</span></div>' }).join('') + '</div>'
+  }).join('') + '</div>'
+  html += '<section class="fx-sec"><h3 class="fx-h">What Rabbit Hole needs to run this</h3><p class="fx-sub">Most of the production already exists: Pipeline orders, Iterate a winner, the seasonal redress, culturalise, platform adaptation and playables. These would close the loop.</p>' +
+    fxTable(['Build', 'What it does'], p.rhBuild.map(function (r) { return ['<b>' + esc(r[0]) + '</b>', esc(r[1])] })) + '</section>'
+  return html
+}
+
+function fxScorecard(p) {
+  var html = '<section class="fx-hero"><span class="rh-eyebrow">Scorecard and asks</span><h2 class="fx-game">How we will know</h2><p class="fx-lede">Leading indicators move in weeks and are ours to hit. CPI, spend and ROAS follow them, and UA sets the budget. Each game’s own scorecard is on its page.</p></section>'
+  html += '<section class="fx-sec"><h3 class="fx-h">Every game, every month</h3>' + fxTable(['KPI', 'Why it matters', 'Aim'], p.scorecardShared.map(function (r) { return ['<b>' + esc(r[0]) + '</b>', esc(r[1]), esc(r[2])] })) + '</section>'
+  html += '<section class="fx-sec"><h3 class="fx-h">What we need from UA and BI</h3>' + fxTable(['From', 'Ask', 'Why'], p.asks.map(function (r) { return ['<span class="pill">' + esc(r[0]) + '</span>', '<b>' + esc(r[1]) + '</b>', esc(r[2])] })) + '</section>'
+  html += '<section class="fx-sec"><h3 class="fx-h">To discuss</h3><ul class="fx-bul">' + p.discuss.map(function (g) { return '<li>' + esc(g) + '</li>' }).join('') + '</ul></section>'
+  return html
+}
+
 function reload() { return call('getAdmin').then(apply) }
 window.addEventListener('beforeunload', function (ev) { if (S.dirty) { ev.preventDefault(); ev.returnValue = '' } })
 function start() {
