@@ -1074,6 +1074,7 @@ function fxRow(k, v) { return '<div class="r"><span>' + k + '</span><span>' + v 
 function fxCode(g) { var x = fxGame(g); return '<span class="fx-code" style="--g:' + FX_COLOR[g] + '">' + esc(x ? x.code : g.toUpperCase()) + '</span>' }
 function fxCodeOf(code) { var g = S.future.games.filter(function (x) { return x.code === code })[0]; return g ? fxCode(g.id) : '<span class="fx-code">' + esc(code) + '</span>' }
 function fxStats(list) { return '<div class="stats n' + list.length + '">' + list.map(function (s) { return '<div class="card stat' + (s.tone ? ' ' + s.tone : '') + '"><span class="rh-eyebrow">' + esc(s.label) + '</span><span class="rh-num">' + esc(s.value) + '</span>' + (s.sub ? '<span class="fx-stat-sub">' + esc(s.sub) + '</span>' : '') + '</div>' }).join('') + '</div>' }
+function fxDecided(p) { return p.decided && p.decided.length ? '<section class="fx-sec"><h3 class="fx-h">Decided</h3>' + fxTable(['', 'Your call' + (p.decidedAt ? ', ' + p.decidedAt : '')], p.decided.map(function (r) { return ['<b>' + esc(r[0]) + '</b>', esc(r[1])] })) + '</section>' : '' }
 function fxTable(head, rows) { return '<div class="card scroll"><table><thead><tr>' + head.map(function (h) { return '<th>' + esc(h) + '</th>' }).join('') + '</tr></thead><tbody>' + rows.map(function (r) { return '<tr>' + r.map(function (c) { return '<td>' + c + '</td>' }).join('') + '</tr>' }).join('') + '</tbody></table></div>' }
 
 function renderFuture() {
@@ -1115,7 +1116,7 @@ function fxOverview(p) {
       return ['<button class="lnk" data-fx="' + g.id + '">' + esc(g.name) + '</button>', esc(t.spend[0]) + ' <span class="dim">→</span> ' + esc(t.spend[1]), esc(t.cpi[0]) + ' <span class="dim">→</span> ' + esc(t.cpi[1]), esc(t.roas[0]) + ' <span class="dim">→</span> ' + esc(t.roas[1]), '<span class="pill' + (t.conf === 'low' ? ' custom' : '') + '">' + esc(t.conf) + '</span>']
     })) + '<p class="fx-note">' + esc(p.targetsNote) + '</p></section>'
   html += '<section class="fx-sec"><h3 class="fx-h">Guardrails</h3><ul class="fx-bul">' + p.guardrails.map(function (g) { return '<li>' + esc(g) + '</li>' }).join('') + '</ul></section>'
-  html += '<section class="fx-sec"><h3 class="fx-h">To discuss</h3><ul class="fx-bul">' + p.discuss.map(function (g) { return '<li>' + esc(g) + '</li>' }).join('') + '</ul></section>'
+  html += fxDecided(p) + '<section class="fx-sec"><h3 class="fx-h">Still to discuss</h3><ul class="fx-bul">' + p.discuss.map(function (g) { return '<li>' + esc(g) + '</li>' }).join('') + '</ul></section>'
   html += '<p class="fx-note">' + esc(p.data) + ' Built ' + esc(p.generated) + '.</p>'
   return html
 }
@@ -1183,7 +1184,7 @@ function fxScorecard(p) {
   var html = '<section class="fx-hero"><span class="rh-eyebrow">Scorecard and asks</span><h2 class="fx-game">How we will know</h2><p class="fx-lede">Leading indicators move in weeks and are ours to hit. CPI, spend and ROAS follow them, and UA sets the budget. Each game’s own scorecard is on its page.</p></section>'
   html += '<section class="fx-sec"><h3 class="fx-h">Every game, every month</h3>' + fxTable(['KPI', 'Why it matters', 'Aim'], p.scorecardShared.map(function (r) { return ['<b>' + esc(r[0]) + '</b>', esc(r[1]), esc(r[2])] })) + '</section>'
   html += '<section class="fx-sec"><h3 class="fx-h">What we need from UA and BI</h3>' + fxTable(['From', 'Ask', 'Why'], p.asks.map(function (r) { return ['<span class="pill">' + esc(r[0]) + '</span>', '<b>' + esc(r[1]) + '</b>', esc(r[2])] })) + '</section>'
-  html += '<section class="fx-sec"><h3 class="fx-h">To discuss</h3><ul class="fx-bul">' + p.discuss.map(function (g) { return '<li>' + esc(g) + '</li>' }).join('') + '</ul></section>'
+  html += fxDecided(p) + '<section class="fx-sec"><h3 class="fx-h">Still to discuss</h3><ul class="fx-bul">' + p.discuss.map(function (g) { return '<li>' + esc(g) + '</li>' }).join('') + '</ul></section>'
   return html
 }
 
