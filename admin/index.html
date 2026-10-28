@@ -910,8 +910,16 @@ function renderPipelineHost() {
         : '<p>No RH Server yet: requests wait until one is ticked.</p>') +
       '<p class="dim" style="margin:10px 0 0">To make a computer the RH Server: in Rabbit Hole on it, signed in with an admin\u2019s work Google account, <b>Pipeline \u2192 Phone \u2192 Is RH Server</b>. Ticking it on another computer moves the RH Server there (Rabbit Hole asks first).</p>' +
       '<label style="display:flex;gap:8px;align-items:flex-start;margin-top:14px;cursor:pointer"><input type="checkbox" id="pipeMail"' + (st.mail ? ' checked' : '') + '> <span><b>Email the person who asked</b> when their order is ready to review or approve, or done (sent from the owner\u2019s account). Off: only the popup on the Pipeline page.</span></label>' +
+      // once, the owner: the previews already on the board opened to the link (Phone.gs phoneMediaOpenTeam, 2026-10-26)
+      (st.owner && h ? '<div class="bar" style="margin-top:14px"><button class="btn ghost" id="pubOpen">Open today\u2019s previews to the link</button></div>' +
+        '<p class="dim" style="margin:6px 0 0">Once: the keyframes and cut previews already on the RH Server\u2019s board, of public games only (never a private game, Other or an unlisted game), open to anyone with the link, as delivered finals are, so the Pipeline page and the phone app load them straight from Drive. New ones open as they go up.</p>' : '') +
       '<p class="dim" style="margin-top:14px">The Pipeline page for the team: <a href="' + esc(st.url) + '" target="_blank">' + esc(st.url) + '</a></p></div>'
     el.innerHTML = html
+    var po = $('pubOpen'); if (po) po.onclick = function () {
+      if (!confirm('Open the previews of public games on the RH Server\u2019s board to anyone with the link (not findable)?')) return
+      po.disabled = true
+      call('phoneMediaOpenTeam').then(function (r) { po.disabled = false; toast(r.note || ('Opened ' + r.opened + (r.already ? ', ' + r.already + ' were already' : '') + (r.skipped ? ', ' + r.skipped + ' left closed' : '') + (r.failed ? ', ' + r.failed + ' failed' : '') + (r.left ? ', ' + r.left + ' to go: press it again' : ''))) }).catch(function (e) { po.disabled = false; fail(e) })
+    }
     var pm = $('pipeMail'); if (pm) pm.onchange = function () { call('phoneMailSet', pm.checked).then(function (on) { toast(on ? 'Pipeline emails on' : 'Pipeline emails off') }).catch(function (e) { pm.checked = !pm.checked; fail(e) }) }
     var off = $('hostOff'); if (off) off.onclick = function () { if (confirm('Disconnect ' + h.name + '? Pipeline requests wait until a host is connected again.')) call('phoneHostDisconnect').then(function () { renderPipelineHost() }).catch(fail) }
     renderPipeTeams(el)
