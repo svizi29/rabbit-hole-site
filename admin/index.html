@@ -66,17 +66,25 @@ body { background: var(--rh-ink); color: var(--rh-text); font-family: var(--rh-b
 .rh-lockup .rh-word { font: 700 19px/1.1 var(--rh-display); letter-spacing: -0.015em; white-space: nowrap; }
 .rh-lockup .rh-word b { font-weight: 800; background: var(--rh-grad); -webkit-background-clip: text; background-clip: text; color: transparent; }
 
-/* The other team pages, one click away. */
-.rh-suite { display: inline-flex; gap: 2px; padding: 3px; border: 1px solid var(--rh-line); border-radius: 999px; background: var(--rh-s1); }
-.rh-suite a { font: 500 12px/1 var(--rh-body); color: var(--rh-text-3); text-decoration: none; padding: 6px 11px; border-radius: 999px; white-space: nowrap; }
-.rh-suite a:hover { color: var(--rh-text); }
-.rh-suite a[aria-current] { color: var(--rh-text); background: var(--rh-s3); }
+/* The other team pages, one click away: row one of the two-row bar, the same as the app's (Pipeline, Studio, DAM, Analytics):
+   flat tabs, the open one lit. */
+.rh-suite { display: inline-flex; gap: 4px; padding: 0; border: 0; background: none; }
+.rh-suite a { font: 500 13px/1 var(--rh-body); color: var(--rh-text-3); text-decoration: none; padding: 8px 13px; border-radius: 7px; white-space: nowrap; transition: color .15s, background .15s; }
+.rh-suite a:hover { color: var(--rh-text); background: rgba(255, 255, 255, 0.05); }
+.rh-suite a[aria-current] { color: #fff; font-weight: 600; background: rgba(255, 255, 255, 0.14); }
 .rh-suite a:focus-visible { outline: 2px solid var(--rh-accent-2); outline-offset: 1px; }
 .rh-suite a[hidden] { display: none; }
 .rh-suite a.rh-admin { color: var(--rh-accent-2); }
 .rh-suite a.rh-download { color: var(--rh-text); background: var(--rh-accent-soft); }
 .rh-suite a.rh-download:hover { background: rgba(124, 92, 255, 0.28); }
-/* The Mac / Windows choice behind "Download Rabbit Hole". */
+/* Row two: the open page's own tabs (the open one white with the violet line, like the app's). A page puts <nav class="rh-sub"> under its top bar. */
+.rh-sub { display: flex; align-items: stretch; gap: 4px; padding: 0 28px; height: 38px; background: rgba(12, 12, 17, .92); border-bottom: 1px solid var(--rh-line); overflow-x: auto; position: sticky; top: 56px; z-index: 19; }
+.rh-sub .rh-st, .rh-sub button.rh-st { font: 500 13px/1 var(--rh-body); color: var(--rh-text-3); background: none; border: 0; border-bottom: 2px solid transparent; padding: 0 12px; cursor: pointer; white-space: nowrap; }
+.rh-sub .rh-st:hover { color: var(--rh-text); }
+.rh-sub .rh-st[aria-current] { color: #fff; font-weight: 600; border-bottom-color: var(--rh-accent); }
+.rh-sub .rh-grow { flex: 1; }
+.rh-sub .rh-st:focus-visible { outline: 2px solid var(--rh-accent-2); outline-offset: -2px; }
+@media (max-width: 760px) { .rh-sub { padding: 0 12px; top: 52px } }
 .rh-dl { border: 1px solid var(--rh-line-2); border-radius: var(--rh-r-lg); background: var(--rh-s1); color: var(--rh-text); padding: 20px; width: min(420px, 92vw); font: 400 14px/1.5 var(--rh-body); }
 .rh-dl::backdrop { background: rgba(0, 0, 0, 0.6); }
 .rh-dl b { font: 700 18px/1.2 var(--rh-display); display: block; }
@@ -91,7 +99,7 @@ body { background: var(--rh-ink); color: var(--rh-text); font-family: var(--rh-b
 .rh-eyebrow { font: 500 11px/1.3 var(--rh-mono); text-transform: uppercase; letter-spacing: 0.08em; color: var(--rh-text-3); }
 .rh-num { font-family: var(--rh-display); font-variant-numeric: tabular-nums; }
 
-@media (max-width: 760px) { .rh-suite { display: none; } }
+@media (max-width: 760px) { .rh-suite { display: none; } .rh-lockup .rh-word { font-size: 17px } }
 @media (prefers-reduced-motion: reduce) { * { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; } }
 </style>
 <!-- rh-brand:end -->
