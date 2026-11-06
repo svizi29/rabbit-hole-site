@@ -278,6 +278,7 @@ details summary { cursor: pointer; color: var(--rh-text-2); }
     <button role="tab" data-tab="jira" aria-selected="false" hidden>Jira</button>
     <button role="tab" data-tab="games" aria-selected="false" hidden>Games</button>
     <button role="tab" data-tab="pipeline" aria-selected="false" hidden>Pipeline</button>
+    <button role="tab" data-tab="feedback" aria-selected="false" hidden>Feedback</button>
     <button role="tab" data-tab="log" aria-selected="false">Log</button>
   </div>
   <section id="tab-people"></section>
@@ -286,6 +287,7 @@ details summary { cursor: pointer; color: var(--rh-text-2); }
   <section id="tab-jira" hidden></section>
   <section id="tab-games" hidden></section>
   <section id="tab-pipeline" hidden></section>
+  <section id="tab-feedback" hidden></section>
   <section id="tab-log" hidden></section>
 </main>
 
@@ -520,11 +522,12 @@ document.querySelector('.tabs').addEventListener('click', function (ev) {
 })
 function showTab(t) {
   document.querySelectorAll('.tabs button').forEach(function (b) { b.setAttribute('aria-selected', b.dataset.tab === t ? 'true' : 'false') })
-  ;['people', 'usage', 'keys', 'jira', 'games', 'pipeline', 'log'].forEach(function (x) { $('tab-' + x).hidden = x !== t })
+  ;['people', 'usage', 'keys', 'jira', 'games', 'pipeline', 'feedback', 'log'].forEach(function (x) { $('tab-' + x).hidden = x !== t })
   if (t === 'games') renderGames()
   if (t === 'pipeline') renderPipelineHost()
   if (t === 'usage' && !S.usage) loadUsage()
   if (t === 'jira') loadJira()
+  if (t === 'feedback') loadFeedback()
   if (t === 'log') loadAudit()
 }
 
@@ -890,6 +893,7 @@ function apply(d) {
   // Games: TSG's (the organisation whose Studio projects can share with the TSG Elements library).
   var gt = document.querySelector('.tabs [data-tab="games"]'); if (gt) gt.hidden = d.orgId !== 'tsg'
   var pt = document.querySelector('.tabs [data-tab="pipeline"]'); if (pt) pt.hidden = d.orgId !== 'tsg'
+  var ft = document.querySelector('.tabs [data-tab="feedback"]'); if (ft) ft.hidden = !d.feedback
   // the top bar's ticked pages for whoever is looking: Future development (its own page since 2026-10-22), the CCC, Growth Daily
   var mine = (d.people || []).filter(function (p) { return p.e === d.me })[0], pg = (mine && mine.effective && mine.effective.pages) || {}
   var has = { future: !!(d.future && d.orgId === 'tsg'), command: !!pg.commandCenter, newsletter: !!pg.newsletter }
@@ -959,6 +963,66 @@ function renderPipelineHost() {
     renderPipeTeams(el)
   }).catch(function (e) { el.innerHTML = '<div class="empty">' + esc(String(e && e.message || e)) + '</div>' })
 }
+
+// ── Feedback: what people told the support chat in Rabbit Hole (Code.gs feedbackList) ──
+// One list for everybody, whichever organisation they signed in with; each ticket has a status and a note kept here.
+var FB = { items: null, statuses: [], filter: 'open', open: null, files: {} }
+var FB_LABEL = { 'new': 'New', looking: 'Looking', waiting: 'Waiting for go', fixed: 'Fixed', wontfix: 'Won\'t fix' }
+function fbSeverity(t) { return '<span class="pill ' + (t.severity === 'stuck' ? 'none' : t.severity === 'cosmetic' ? '' : 'custom') + '">' + esc(t.severity || 'degraded') + '</span>' }
+function loadFeedback() {
+  var el = $('tab-feedback')
+  if (!FB.items) el.innerHTML = '<div class="empty">Loading the tickets…</div>'
+  return call('feedbackList', 60).then(function (r) { FB.items = r.tickets || []; FB.statuses = r.statuses || []; renderFeedback() })
+    .catch(function (e) { el.innerHTML = '<div class="empty">' + esc(String(e && e.message || e)) + '</div>' })
+}
+function renderFeedback() {
+  var el = $('tab-feedback'), all = FB.items || []
+  var shown = all.filter(function (t) { return FB.filter === 'all' ? true : FB.filter === 'open' ? (t.status === 'new' || t.status === 'looking' || t.status === 'waiting') : t.status === FB.filter })
+  var counts = {}; all.forEach(function (t) { counts[t.status] = (counts[t.status] || 0) + 1 })
+  var bar = ['open', 'new', 'looking', 'waiting', 'fixed', 'wontfix', 'all'].map(function (f) {
+    var n = f === 'all' ? all.length : f === 'open' ? all.filter(function (t) { return ['new', 'looking', 'waiting'].indexOf(t.status) >= 0 }).length : (counts[f] || 0)
+    return '<button class="btn sm' + (FB.filter === f ? ' primary' : '') + '" data-fbf="' + f + '">' + (f === 'open' ? 'Open' : f === 'all' ? 'All' : FB_LABEL[f]) + ' ' + n + '</button>'
+  }).join(' ')
+  var cards = shown.length ? shown.map(function (t) {
+    var open = FB.open === t.id
+    var head = '<div style="display:flex;gap:10px;align-items:center;cursor:pointer" data-fbo="' + esc(t.id) + '">' + fbSeverity(t) +
+      '<strong style="flex:1;min-width:0">' + esc(t.title || 'Problem report') + '</strong>' +
+      '<span class="pill ' + (t.status === 'fixed' ? 'ok' : t.status === 'wontfix' ? 'off' : '') + '">' + esc(FB_LABEL[t.status] || t.status) + '</span></div>' +
+      '<div style="color:var(--rh-text-3);font-size:12.5px;margin-top:4px">' + esc(t.who || 'unknown') + ' · v' + esc(t.appVersion || '?') + ' · ' + esc(String(t.platform || '')) + ' · ' + esc(t.area || '') + ' · ' + esc(String(t.when || '').replace('T', ' ').slice(0, 16)) + '</div>'
+    if (!open) return '<div class="card" style="padding:12px 14px;margin-bottom:8px">' + head + '<div style="margin-top:6px;color:var(--rh-text-2)">' + esc(String(t.summary || '').slice(0, 180)) + '</div></div>'
+    var rows = [['What happened', t.summary], ['Steps', t.steps], ['Expected', t.expected], ['Actual', t.actual], ['Suspected cause', t.suspected_cause], ['Needs from the maker', t.needs_from_gasper]].filter(function (r) { return r[1] }).map(function (r) {
+      return '<div style="margin-top:8px"><div style="font-size:11.5px;color:var(--rh-text-3);text-transform:uppercase;letter-spacing:.04em">' + r[0] + '</div><div style="white-space:pre-wrap">' + esc(r[1]) + '</div></div>'
+    }).join('')
+    var files = (t.files || []).map(function (f) { return '<button class="btn sm" data-fbfile="' + esc(t.id) + '|' + esc(f) + '">' + esc(f) + '</button>' }).join(' ') +
+      ' <button class="btn sm" data-fbfile="' + esc(t.id) + '|transcript.json">Chat</button> <button class="btn sm" data-fbfile="' + esc(t.id) + '|diag.log">Log errors</button>'
+    var shownFiles = (FB.files[t.id] || []).map(function (f) {
+      return f.dataUrl ? '<div style="margin-top:8px"><img src="' + f.dataUrl + '" style="max-width:100%;border-radius:8px;border:1px solid var(--rh-line)"></div>' : '<pre style="margin-top:8px;white-space:pre-wrap;max-height:260px;overflow:auto;background:var(--rh-s2);padding:10px;border-radius:8px;font-size:12px">' + esc(f.text || '') + '</pre>'
+    }).join('')
+    var sel = '<select id="fbs">' + FB.statuses.map(function (x) { return '<option value="' + x + '"' + (x === t.status ? ' selected' : '') + '>' + esc(FB_LABEL[x] || x) + '</option>' }).join('') + '</select>'
+    return '<div class="card" style="padding:12px 14px;margin-bottom:8px;border-color:var(--rh-accent)">' + head + rows +
+      '<div style="margin-top:10px;display:flex;gap:6px;flex-wrap:wrap">' + files + '</div>' + shownFiles +
+      '<div style="margin-top:12px;display:flex;gap:8px;align-items:center;flex-wrap:wrap">' + sel + '<input type="text" id="fbn" style="flex:1;min-width:200px" placeholder="Note (kept here)" value="' + esc(t.note || '') + '"><button class="btn primary sm" data-fbsave="' + esc(t.id) + '">Save</button></div></div>'
+  }).join('') : '<div class="empty">No tickets here.</div>'
+  el.innerHTML = '<div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-bottom:12px">' + bar + ' <button class="btn sm" data-fbf="refresh">Refresh</button></div>' + cards
+}
+$('tab-feedback').addEventListener('click', function (ev) {
+  var t = ev.target.closest('[data-fbf],[data-fbo],[data-fbfile],[data-fbsave]'); if (!t) return
+  if (t.dataset.fbf) { if (t.dataset.fbf === 'refresh') { FB.items = null; loadFeedback(); return } FB.filter = t.dataset.fbf; FB.open = null; renderFeedback(); return }
+  if (t.dataset.fbo) { FB.open = FB.open === t.dataset.fbo ? null : t.dataset.fbo; renderFeedback(); return }
+  if (t.dataset.fbfile) {
+    var p = t.dataset.fbfile.split('|'); t.disabled = true
+    call('feedbackFile', p[0], p[1]).then(function (f) { (FB.files[p[0]] = FB.files[p[0]] || []).push(f); renderFeedback() }).catch(function (e) { t.disabled = false; alert(String(e && e.message || e)) })
+    return
+  }
+  if (t.dataset.fbsave) {
+    var id = t.dataset.fbsave; t.disabled = true
+    call('feedbackSet', id, $('fbs').value, $('fbn').value).then(function () {
+      var it = FB.items.filter(function (x) { return x.id === id })[0]; if (it) { it.status = $('fbs').value; it.note = $('fbn').value }
+      renderFeedback()
+    }).catch(function (e) { t.disabled = false; alert(String(e && e.message || e)) })
+  }
+})
+
 function reload() { return call('getAdmin').then(apply) }
 window.addEventListener('beforeunload', function (ev) { if (S.dirty) { ev.preventDefault(); ev.returnValue = '' } })
 function start() {
