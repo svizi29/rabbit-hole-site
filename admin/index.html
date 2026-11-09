@@ -273,6 +273,7 @@ details summary { cursor: pointer; color: var(--rh-text-2); }
 <main>
   <div class="tabs" role="tablist">
     <button role="tab" data-tab="people" aria-selected="true">People</button>
+    <button role="tab" data-tab="types" aria-selected="false">Types</button>
     <button role="tab" data-tab="usage" aria-selected="false">Usage</button>
     <button role="tab" data-tab="keys" aria-selected="false">API keys</button>
     <button role="tab" data-tab="jira" aria-selected="false" hidden>Jira</button>
@@ -282,6 +283,7 @@ details summary { cursor: pointer; color: var(--rh-text-2); }
     <button role="tab" data-tab="log" aria-selected="false">Log</button>
   </div>
   <section id="tab-people"></section>
+  <section id="tab-types" hidden></section>
   <section id="tab-usage" hidden></section>
   <section id="tab-keys" hidden></section>
   <section id="tab-jira" hidden></section>
@@ -522,7 +524,8 @@ document.querySelector('.tabs').addEventListener('click', function (ev) {
 })
 function showTab(t) {
   document.querySelectorAll('.tabs button').forEach(function (b) { b.setAttribute('aria-selected', b.dataset.tab === t ? 'true' : 'false') })
-  ;['people', 'usage', 'keys', 'jira', 'games', 'pipeline', 'feedback', 'log'].forEach(function (x) { $('tab-' + x).hidden = x !== t })
+  ;['people', 'types', 'usage', 'keys', 'jira', 'games', 'pipeline', 'feedback', 'log'].forEach(function (x) { $('tab-' + x).hidden = x !== t })
+  if (t === 'types') renderTypes()
   if (t === 'games') renderGames()
   if (t === 'pipeline') renderPipelineHost()
   if (t === 'usage' && !S.usage) loadUsage()
@@ -537,7 +540,13 @@ var LEVEL_LABEL = { none: 'No DAM', user: 'User', power: 'Power user', admin: 'A
 function levelRole(level) { return level === 'admin' ? 'admin' : level === 'power' ? 'power' : 'user' }
 function roleModules(role) { return S.data.catalog.modules.filter(function (m) { return m.roles.indexOf(role) >= 0 }).map(function (m) { return m.id }) }
 function appOn(p) { return p.status !== 'suspended' && (p.level === 'admin' || !!p.app) }
-function modsOf(p) { return !appOn(p) ? [] : Array.isArray(p.m) ? p.m : roleModules(levelRole(p.level)) }
+function typeOfP(p) { return p.type ? (S.data.types || []).filter(function (t) { return t.id === p.type })[0] || null : null }
+function modsOf(p) {
+  if (!appOn(p)) return []
+  if (Array.isArray(p.m)) return p.m
+  var t = typeOfP(p)
+  return t && Array.isArray(t.m) ? t.m.slice() : roleModules(levelRole(p.level))
+}
 function markDirty() { S.dirty = true; var m = $('pmsg'); if (m) m.textContent = 'Not saved yet.' }
 
 function renderPeople() {
@@ -555,12 +564,12 @@ function renderPeople() {
     '</div>'
   html += '<div class="bar">' + (d.hasDam ? '<label class="dim" for="rpany">Creative report</label><select id="rpany"><option value="1"' + (d.settings.reportAnyone ? ' selected' : '') + '>Anyone with a ' + esc(d.org) + ' account</option><option value="0"' + (d.settings.reportAnyone ? '' : ' selected') + '>Only people with Report ticked</option></select>' : '') +
     '<span class="grow"></span><input type="search" id="find" placeholder="Find" style="width:180px"></div>'
-  html += '<div class="card scroll"><table class="ppl"><thead><tr><th>Person</th><th>Access</th>' + (dam ? '<th class="c">Analytics</th><th class="c">Report</th>' : '') + '<th class="c">Local app</th><th class="c" title="The Creative Command Center — yours until you tick someone">CCC</th><th class="c" title="Gets Growth Daily, the daily newsletter">Growth Daily</th>' + (d.orgId === 'tsg' ? '<th class="c" title="Asks the Pipeline for work in Chrome or the phone app, and reviews and approves their own orders">Pipeline</th><th class="c" title="Sees and decides on every Pipeline order">Pipeline: all</th><th class="c" title="Can send work from the phone app and the Pipeline page to their own Rabbit Hole computers, not only the RH Server">Own computers</th><th class="c" title="Reviews cut and motion by hand. Everyone else: once their brief is approved, the cut and motion approve themselves up to Finishing, and they click Done.">Manual review</th><th class="c" title="Sees Future development, the creative growth plan, in the top bar and the iPhone app — yours until you tick someone">Future</th>' : '') + (dam ? '<th>DAM groups</th>' : '') + '<th>Modules</th><th class="hide-sm">Last seen</th><th></th></tr></thead><tbody id="ppl">'
+  html += '<div class="card scroll"><table class="ppl"><thead><tr><th>Person</th><th>Access</th><th>Type</th>' + (dam ? '<th class="c">Analytics</th><th class="c">Report</th>' : '') + '<th class="c">Local app</th><th class="c" title="The Creative Command Center — yours until you tick someone">CCC</th><th class="c" title="Gets Growth Daily, the daily newsletter">Growth Daily</th>' + (d.orgId === 'tsg' ? '<th class="c" title="Asks the Pipeline for work in Chrome or the phone app, and reviews and approves their own orders">Pipeline</th><th class="c" title="Sees and decides on every Pipeline order">Pipeline: all</th><th class="c" title="Can send work from the phone app and the Pipeline page to their own Rabbit Hole computers, not only the RH Server">Own computers</th><th class="c" title="Can also produce on their own computer. Without it every job they send goes to the RH Server, queued if it is away. Yours always.">Run locally</th><th class="c" title="Reviews cut and motion by hand. Everyone else: once their brief is approved, the cut and motion approve themselves up to Finishing, and they click Done.">Manual review</th><th class="c" title="Sees Future development, the creative growth plan, in the top bar and the iPhone app — yours until you tick someone">Future</th>' : '') + (dam ? '<th>DAM groups</th>' : '') + '<th>Modules</th><th class="hide-sm">Last seen</th><th></th></tr></thead><tbody id="ppl">'
   list.forEach(function (p, i) {
     var seen = p.seen ? when(p.seen.at) + (p.seen.v ? ' <span class="mono dim">' + esc(p.seen.v) + '</span>' : '') : '<span class="dim">never</span>'
     var who = '<td class="who"><b>' + esc(p.name || p.e.split('@')[0]) + (p.owner ? ' <span class="pill admin">Owner</span>' : '') + (p.status === 'suspended' ? ' <span class="pill off">Suspended</span>' : '') + '</b><span>' + esc(p.e) + '</span></td>'
     if (p.owner) {
-      html += '<tr data-i="' + i + '">' + who + '<td><span class="pill admin">Admin</span></td>' + (dam ? '<td class="c">✓</td><td class="c">✓</td>' : '') + '<td class="c">✓</td><td class="c">✓</td><td class="c">✓</td>' + (d.orgId === 'tsg' ? '<td class="c">✓</td><td class="c">✓</td><td class="c">✓</td><td class="c">✓</td>' : '') + (dam ? '<td class="dim">every folder</td>' : '') +
+      html += '<tr data-i="' + i + '">' + who + '<td><span class="pill admin">Admin</span></td><td class="dim">—</td>' + (dam ? '<td class="c">✓</td><td class="c">✓</td>' : '') + '<td class="c">✓</td><td class="c">✓</td><td class="c">✓</td>' + (d.orgId === 'tsg' ? '<td class="c">✓</td><td class="c">✓</td><td class="c">✓</td><td class="c">✓</td><td class="c">✓</td>' : '') + (dam ? '<td class="dim">every folder</td>' : '') +
         '<td><button class="lnk" data-mods="' + i + '">' + (Array.isArray(p.m) ? 'Custom · ' + p.m.length : 'Everything') + '</button></td><td class="hide-sm">' + seen + '</td><td class="dim">can’t be removed</td></tr>'
       return
     }
@@ -569,12 +578,13 @@ function renderPeople() {
     // not given by the access level: ticked per person, admins included
     var tick = function (k, label) { return '<td class="c"><input type="checkbox" data-k="' + k + '" data-i="' + i + '"' + (p[k] ? ' checked' : '') + ' aria-label="' + label + ' for ' + esc(p.e) + '"></td>' }
     var gchips = S.groups.length ? S.groups.map(function (g) { return '<button class="gchip' + ((p.g || []).indexOf(g.id) >= 0 ? ' on' : '') + '" data-ug="' + i + '" data-g="' + esc(g.id) + '">' + esc(g.name) + '</button>' }).join('') : '<span class="dim">no groups</span>'
+    var typeSel = '<td><select data-type="' + i + '" aria-label="Type for ' + esc(p.e) + '"><option value="">None</option>' + (d.types || []).map(function (t) { return '<option value="' + esc(t.id) + '"' + (p.type === t.id ? ' selected' : '') + '>' + esc(t.name) + '</option>' }).join('') + '</select></td>'
     html += '<tr data-i="' + i + '">' + who +
       '<td><select data-level="' + i + '" aria-label="Access for ' + esc(p.e) + '">' + ['none', 'user', 'power', 'admin'].filter(function (l) { return dam || l !== 'none' || p.level === 'none' }).map(function (l) { return '<option value="' + l + '"' + (p.level === l ? ' selected' : '') + '>' + LEVEL_LABEL[l] + '</option>' }).join('') + '</select></td>' +
-      (dam ? box('an') + box('rp') : '') + box('app') + tick('cc', 'Creative Command Center (CCC)') + tick('nl', 'Growth Daily newsletter') +
-      (d.orgId === 'tsg' ? (adm ? '<td class="c"><input type="checkbox" checked disabled title="Admins have the whole Pipeline" aria-label="Pipeline for ' + esc(p.e) + '"></td><td class="c"><input type="checkbox" checked disabled title="Admins see and decide on every order" aria-label="Pipeline: all for ' + esc(p.e) + '"></td><td class="c"><input type="checkbox" checked disabled title="Admins can use their own computers" aria-label="Own computers for ' + esc(p.e) + '"></td>' : tick('pr', 'Pipeline') + tick('pa', 'Pipeline: all') + tick('pl', 'Own computers')) + (p.e === d.owner ? '<td class="c"><input type="checkbox" checked disabled title="The owner always reviews by hand" aria-label="Manual review for ' + esc(p.e) + '"></td>' : tick('mr', 'Manual review')) + (d.me === d.owner ? tick('fd', 'Future development') : '<td class="c"><input type="checkbox"' + (p.fd ? ' checked' : '') + ' disabled title="Only the owner shares Future development" aria-label="Future development for ' + esc(p.e) + '"></td>') : '') +
+      typeSel + (dam ? box('an') + box('rp') : '') + box('app') + tick('cc', 'Creative Command Center (CCC)') + tick('nl', 'Growth Daily newsletter') +
+      (d.orgId === 'tsg' ? (adm ? '<td class="c"><input type="checkbox" checked disabled title="Admins have the whole Pipeline" aria-label="Pipeline for ' + esc(p.e) + '"></td><td class="c"><input type="checkbox" checked disabled title="Admins see and decide on every order" aria-label="Pipeline: all for ' + esc(p.e) + '"></td><td class="c"><input type="checkbox" checked disabled title="Admins can use their own computers" aria-label="Own computers for ' + esc(p.e) + '"></td>' : tick('pr', 'Pipeline') + tick('pa', 'Pipeline: all') + tick('pl', 'Own computers')) + tick('lc', 'Run locally') + (p.e === d.owner ? '<td class="c"><input type="checkbox" checked disabled title="The owner always reviews by hand" aria-label="Manual review for ' + esc(p.e) + '"></td>' : tick('mr', 'Manual review')) + (d.me === d.owner ? tick('fd', 'Future development') : '<td class="c"><input type="checkbox"' + (p.fd ? ' checked' : '') + ' disabled title="Only the owner shares Future development" aria-label="Future development for ' + esc(p.e) + '"></td>') : '') +
       (dam ? '<td><div class="chips">' + (adm || p.level === 'power' ? '<span class="dim">every folder</span>' : gchips) + '</div></td>' : '') +
-      '<td>' + (appOn(p) ? '<button class="lnk" data-mods="' + i + '">' + (Array.isArray(p.m) ? 'Custom · ' + p.m.length : 'The level’s · ' + modsOf(p).length) + '</button>' : '<span class="dim">no app</span>') + '</td>' +
+      '<td>' + (appOn(p) ? '<button class="lnk" data-mods="' + i + '">' + (Array.isArray(p.m) ? 'Custom · ' + p.m.length : (p.type && typeOfP(p) && Array.isArray(typeOfP(p).m) ? 'The type’s · ' : 'The level’s · ') + modsOf(p).length) + '</button>' : '<span class="dim">no app</span>') + '</td>' +
       '<td class="hide-sm">' + seen + '</td>' +
       '<td><button class="btn danger sm" data-rm="' + i + '" aria-label="Remove ' + esc(p.e) + '">Remove</button></td></tr>'
   })
@@ -599,6 +609,16 @@ function bindPeople() {
     document.querySelectorAll('#ppl tr').forEach(function (tr) { tr.hidden = q && tr.textContent.toLowerCase().indexOf(q) < 0 })
   }
   document.querySelectorAll('#ppl [data-level]').forEach(function (s) { s.onchange = function () { list[+s.dataset.level].level = s.value; markDirty(); renderPeople() } })
+  document.querySelectorAll('#ppl [data-type]').forEach(function (s) {
+    s.onchange = function () {
+      var p = list[+s.dataset.type], t = (S.data.types || []).filter(function (x) { return x.id === s.value })[0]
+      p.type = s.value
+      // the type's ticks are copied onto the person once; each can still be changed by hand
+      if (t) Object.keys(t.flags || {}).forEach(function (k) { p[k] = !!t.flags[k] })
+      if (t && Array.isArray(t.m) && Array.isArray(p.m)) p.m = null // the type decides, unless a custom list is chosen again
+      markDirty(); renderPeople()
+    }
+  })
   document.querySelectorAll('#ppl [data-k]').forEach(function (c) { c.onchange = function () { list[+c.dataset.i][c.dataset.k] = c.checked; markDirty(); renderPeople() } })
   document.querySelectorAll('#ppl [data-ug]').forEach(function (b) {
     b.onclick = function () { var p = list[+b.dataset.ug], g = b.dataset.g; p.g = p.g || []; var k = p.g.indexOf(g); if (k >= 0) p.g.splice(k, 1); else p.g.push(g); markDirty(); renderPeople() }
@@ -614,7 +634,7 @@ function bindPeople() {
     var level = $('newlevel').value, an = !!$('newan') && $('newan').checked, rp = !!$('newrp') && $('newrp').checked, app = $('newapp').checked, n = 0
     String($('newpeople').value || '').split(/[\s,;]+/).map(function (x) { return x.trim().toLowerCase() }).filter(function (x) { return /^[^@\s]+@[^@\s]+$/.test(x) }).forEach(function (e) {
       if (list.some(function (p) { return p.e === e })) return
-      list.push({ e: e, name: '', level: level, an: an, rp: rp, app: app, g: [], m: null, status: 'active', note: '' }); n++
+      list.push({ e: e, name: '', level: level, an: an, rp: rp, app: app, lc: false, type: '', g: [], m: null, status: 'active', note: '' }); n++
     })
     $('newpeople').value = ''
     if (n) { markDirty(); renderPeople(); toast('Added ' + n + ' — press Save people') }
@@ -646,6 +666,60 @@ function bindPeople() {
       call('saveGroups', S.groups.filter(function (g) { return g.id !== id })).then(function (d) { apply(d); toast('Group deleted') }).catch(fail)
     }
   })
+}
+
+// ── Types: named presets of modules and ticks for the Type column on People ──
+var TYPE_TICKS = [['an', 'Analytics page'], ['rp', 'Report page'], ['cc', 'CCC'], ['nl', 'Growth Daily'], ['pr', 'Pipeline'], ['pa', 'Pipeline: all'], ['pl', 'Own computers'], ['lc', 'Run locally'], ['mr', 'Manual review']]
+function renderTypes() {
+  var d = S.data, el = $('tab-types'); if (!d) return
+  if (!S.types) S.types = JSON.parse(JSON.stringify(d.types || []))
+  var types = S.types, cat = d.catalog
+  var groups = []
+  cat.modules.forEach(function (m) { if (groups.indexOf(m.group) < 0) groups.push(m.group) })
+  var used = function (t) { return (S.data.people || []).filter(function (p) { return p.type === t.id }).length }
+  var h = '<p class="dim" style="margin:0 0 12px">A type is a named preset: the modules in the app and some ticks. Pick one in the Type column on People, then change anything for that person by hand. The ticks are copied when the type is picked; the modules follow the type until you choose a custom list for the person. Full is today’s access (the level’s modules).</p>'
+  types.forEach(function (t, i) {
+    var full = t.id === 'full', n = t.id ? used(t) : 0
+    h += '<section class="card" style="padding:14px 16px;margin-bottom:12px"><div class="bar"><input type="text" data-tn="' + i + '" value="' + esc(t.name) + '" maxlength="40" aria-label="Type name" style="width:220px"><span class="dim">' + (n ? n + (n === 1 ? ' person' : ' people') : 'nobody yet') + '</span><span class="grow"></span>' +
+      (full ? '<span class="dim">Always there</span>' : '<button class="btn danger sm" data-td="' + i + '"' + (n ? ' disabled title="Move the people on it to another type first"' : '') + '>Delete</button>') + '</div>'
+    if (full) h += '<p class="dim" style="margin:8px 0 0">Modules: the person’s level decides (Admin everything, Power every released, User the ones you give). Ticks as set per person.</p>'
+    else {
+      h += '<div class="mods" style="margin-top:8px">' + groups.map(function (g) {
+        return '<div><h4>' + esc(g) + '</h4>' + cat.modules.filter(function (m) { return m.group === g }).map(function (m) {
+          return '<label><input type="checkbox" data-tm="' + i + '" data-m="' + esc(m.id) + '"' + ((t.m || []).indexOf(m.id) >= 0 ? ' checked' : '') + '> ' + esc(m.label) + (m.beta ? ' <span class="pill beta">Beta</span>' : '') + '</label>'
+        }).join('') + '</div>'
+      }).join('') + '</div>'
+      h += '<div class="chips" style="margin-top:8px">' + TYPE_TICKS.filter(function (k) { return d.orgId === 'tsg' || ['pr', 'pa', 'pl', 'lc', 'mr'].indexOf(k[0]) < 0 }).map(function (k) {
+        return '<label class="check"><input type="checkbox" data-tf="' + i + '" data-k="' + k[0] + '"' + (t.flags && t.flags[k[0]] ? ' checked' : '') + '> ' + esc(k[1]) + '</label>'
+      }).join('') + '</div><p class="dim" style="margin:6px 0 0">Ticked ticks are given when the type is picked; unticked ones are switched off.</p>'
+    }
+    h += '</section>'
+  })
+  h += '<div class="bar"><input id="newtype" type="text" placeholder="New type, e.g. Reviewer" style="width:240px" maxlength="40"><button class="btn" id="addtype">Add type</button><span class="grow"></span><button class="btn primary" id="savetypes">Save types</button><span class="dim" id="tmsg">' + (S.typesDirty ? 'Not saved yet.' : types.length + ' types') + '</span></div>'
+  el.innerHTML = h
+  var dirty = function () { S.typesDirty = true; $('tmsg').textContent = 'Not saved yet.' }
+  el.querySelectorAll('[data-tn]').forEach(function (x) { x.oninput = function () { types[+x.dataset.tn].name = x.value; dirty() } })
+  el.querySelectorAll('[data-tm]').forEach(function (x) {
+    x.onchange = function () { var t = types[+x.dataset.tm], id = x.dataset.m; t.m = (t.m || []).filter(function (y) { return y !== id }); if (x.checked) t.m.push(id); dirty() }
+  })
+  el.querySelectorAll('[data-tf]').forEach(function (x) {
+    x.onchange = function () { var t = types[+x.dataset.tf]; t.flags = t.flags || {}; t.flags[x.dataset.k] = x.checked; dirty() }
+  })
+  el.querySelectorAll('[data-td]').forEach(function (b) {
+    b.onclick = function () {
+      if (b.dataset.sure !== '1') { b.dataset.sure = '1'; b.textContent = 'Delete?'; return }
+      types.splice(+b.dataset.td, 1); S.typesDirty = true; renderTypes()
+    }
+  })
+  $('addtype').onclick = function () {
+    var n = $('newtype').value.trim(); if (!n) return
+    types.push({ id: '', name: n, m: [], flags: {} }); S.typesDirty = true; renderTypes()
+  }
+  $('newtype').onkeydown = function (ev) { if (ev.key === 'Enter') $('addtype').click() }
+  $('savetypes').onclick = function () {
+    var btn = this; btn.disabled = true; $('tmsg').textContent = 'Saving…'
+    call('saveTypes', types).then(function (d2) { S.typesDirty = false; S.types = null; var keep = S.dirty; apply(d2); S.dirty = keep; renderTypes(); toast('Types saved') }).catch(function (e) { btn.disabled = false; $('tmsg').textContent = 'Not saved yet.'; fail(e) })
+  }
 }
 
 // ── One person: name, note, suspend, and modules beyond their level's ──
@@ -687,7 +761,7 @@ function renderPanel() {
   $('pClose').onclick = closePanel
   function readPanel() { p.name = $('pName').value.trim(); p.note = $('pNote').value; if ($('pSusp')) p.status = $('pSusp').checked ? 'suspended' : 'active' }
   if ($('pSusp')) $('pSusp').onchange = function () { readPanel(); renderPanel() }
-  if ($('pCustom')) $('pCustom').onchange = function () { readPanel(); p.m = this.checked ? roleModules(levelRole(p.level)) : null; renderPanel() }
+  if ($('pCustom')) $('pCustom').onchange = function () { readPanel(); p.m = this.checked ? modsOf(p).slice() : null; renderPanel() }
   document.querySelectorAll('#panel input[data-m]').forEach(function (cb) {
     cb.onchange = function () { var id = this.dataset.m; p.m = (p.m || []).filter(function (x) { return x !== id }); if (this.checked) p.m.push(id) }
   })
@@ -899,6 +973,7 @@ function apply(d) {
   var has = { future: !!(d.future && d.orgId === 'tsg'), command: !!pg.commandCenter, newsletter: !!pg.newsletter }
   document.querySelectorAll('.rh-suite [data-gate]').forEach(function (g) { g.hidden = !has[g.getAttribute('data-gate')] })
   S.games = null
+  if (!S.typesDirty) S.types = null
   renderPeople(); renderKeys()
 }
 // ── Pipeline: the team's host (Phone.gs) ─────────────────────────────────────
