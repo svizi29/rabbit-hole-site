@@ -271,10 +271,12 @@ details summary { cursor: pointer; color: var(--rh-text-2); }
 <dialog class="rh-dl" id="nwDl" aria-labelledby="nwDlT"><b id="nwDlT">Download Rabbit Hole</b><p>The North Watch version. It keeps itself up to date for the people on this list.</p><div id="nwDlBody"></div><form method="dialog"><button>Close</button></form></dialog>
 </header>
 <main>
+  <div id="capBanner"></div>
   <div class="tabs" role="tablist">
     <button role="tab" data-tab="people" aria-selected="true">People</button>
     <button role="tab" data-tab="types" aria-selected="false">Types</button>
     <button role="tab" data-tab="usage" aria-selected="false">Usage</button>
+    <button role="tab" data-tab="caps" aria-selected="false" hidden>Caps</button>
     <button role="tab" data-tab="keys" aria-selected="false">API keys</button>
     <button role="tab" data-tab="jira" aria-selected="false" hidden>Jira</button>
     <button role="tab" data-tab="games" aria-selected="false" hidden>Games</button>
@@ -285,6 +287,7 @@ details summary { cursor: pointer; color: var(--rh-text-2); }
   <section id="tab-people"></section>
   <section id="tab-types" hidden></section>
   <section id="tab-usage" hidden></section>
+  <section id="tab-caps" hidden></section>
   <section id="tab-keys" hidden></section>
   <section id="tab-jira" hidden></section>
   <section id="tab-games" hidden></section>
@@ -524,11 +527,12 @@ document.querySelector('.tabs').addEventListener('click', function (ev) {
 })
 function showTab(t) {
   document.querySelectorAll('.tabs button').forEach(function (b) { b.setAttribute('aria-selected', b.dataset.tab === t ? 'true' : 'false') })
-  ;['people', 'types', 'usage', 'keys', 'jira', 'games', 'pipeline', 'feedback', 'log'].forEach(function (x) { $('tab-' + x).hidden = x !== t })
+  ;['people', 'types', 'usage', 'caps', 'keys', 'jira', 'games', 'pipeline', 'feedback', 'log'].forEach(function (x) { $('tab-' + x).hidden = x !== t })
   if (t === 'types') renderTypes()
   if (t === 'games') renderGames()
   if (t === 'pipeline') renderPipelineHost()
   if (t === 'usage' && !S.usage) loadUsage()
+  if (t === 'caps') renderCaps()
   if (t === 'jira') loadJira()
   if (t === 'feedback') loadFeedback()
   if (t === 'log') loadAudit()
@@ -968,6 +972,8 @@ function apply(d) {
   var gt = document.querySelector('.tabs [data-tab="games"]'); if (gt) gt.hidden = d.orgId !== 'tsg'
   var pt = document.querySelector('.tabs [data-tab="pipeline"]'); if (pt) pt.hidden = d.orgId !== 'tsg'
   var ft = document.querySelector('.tabs [data-tab="feedback"]'); if (ft) ft.hidden = !d.feedback
+  var ct = document.querySelector('.tabs [data-tab="caps"]'); if (ct) ct.hidden = !d.caps
+  S.capsDraft = null; renderCapBanner(); if (!$('tab-caps').hidden) renderCaps()
   // the top bar's ticked pages for whoever is looking: Future development (its own page since 2026-10-22), the CCC, Growth Daily
   var mine = (d.people || []).filter(function (p) { return p.e === d.me })[0], pg = (mine && mine.effective && mine.effective.pages) || {}
   var has = { future: !!(d.future && d.orgId === 'tsg'), command: !!pg.commandCenter, newsletter: !!pg.newsletter }
@@ -1097,6 +1103,93 @@ $('tab-feedback').addEventListener('click', function (ev) {
     }).catch(function (e) { t.disabled = false; alert(String(e && e.message || e)) })
   }
 })
+
+// ── Caps: a monthly limit on the joint AI spend of chosen people (Code.gs 'Monthly spend caps'; North Watch only) ──
+// A cap sums every provider and model for its members, calendar month to date (UTC). Reaching it takes the AI keys out of
+// their next lease; the owner raises it here. A member can overshoot by what one lease interval spends (keys already
+// leased last up to a day), so it is a brake, not a hard ceiling.
+function capUsd(n) { return '$' + Number(n || 0).toFixed(2) }
+function capColor(state) { return state === 'capped' ? 'var(--rh-bad)' : state === 'warn' ? 'var(--rh-warn)' : 'var(--rh-good)' }
+function capBar(c) {
+  return '<div style="height:8px;border-radius:99px;background:var(--rh-s3);overflow:hidden"><div style="height:100%;width:' + Math.min(100, c.pct) + '%;background:' + capColor(c.state) + '"></div></div>'
+}
+function capRaiseRow(c, id) {
+  return '<span class="dim">Raise to $</span> <input type="text" inputmode="decimal" size="7" data-raise-to="' + id + '" placeholder="' + Math.ceil(c.limitUsd + 1) + '"> ' +
+    '<button class="btn primary sm" data-raise="' + id + '">Raise</button> <button class="btn sm" data-raise-add="' + id + '" data-amt="100">+ $100</button>'
+}
+function renderCapBanner() {
+  var el = $('capBanner'), d = S.data
+  if (!d || !d.caps || !d.caps.owner) { el.innerHTML = ''; return }
+  var h = ''
+  d.caps.items.filter(function (c) { return c.state !== 'ok' }).forEach(function (c) {
+    var hit = c.state === 'capped'
+    h += '<div class="card" role="alert" style="padding:14px 16px;border-color:' + capColor(c.state) + ';display:flex;flex-wrap:wrap;gap:10px;align-items:center">' +
+      '<div style="flex:1 1 280px"><b>' + esc(c.name) + '</b> ' + (hit ? 'reached ' : 'is at ') + capUsd(c.spentUsd) + ' of ' + capUsd(c.limitUsd) + ' this month' + (hit ? '. Its members get no AI keys until you raise it, or until ' + esc(c.resetsOn) + '.' : ' (' + c.pct + '%).') + '</div>' +
+      '<div>' + capRaiseRow(c, c.id) + ' <button class="btn sm" data-leave="' + c.id + '">Leave it</button></div></div>'
+  })
+  el.innerHTML = h
+  el.style.display = h ? 'flex' : 'none'; el.style.flexDirection = 'column'; el.style.gap = '10px'
+}
+function capsRaise(id, to, add) {
+  var o = to ? { to: Number(String(to).replace(/[$,\s]/g, '')) } : { add: add }
+  call('raiseCap', id, o).then(function (v) { S.data.caps = v; S.capsDraft = null; renderCapBanner(); if (!$('tab-caps').hidden) renderCaps(); toast('Raised') }).catch(fail)
+}
+$('capBanner').addEventListener('click', function (ev) {
+  var b = ev.target.closest('button'); if (!b) return
+  if (b.dataset.leave) { $('capBanner').innerHTML = ''; return }
+  var id = b.dataset.raise || b.dataset.raiseAdd; if (!id) return
+  var to = b.dataset.raise ? $('capBanner').querySelector('[data-raise-to="' + id + '"]').value.trim() : ''
+  capsRaise(id, to, b.dataset.raiseAdd ? Number(b.dataset.amt) : 0)
+})
+function renderCaps() {
+  var d = S.data, el = $('tab-caps'); if (!d || !d.caps) return
+  var cp = d.caps, mine = cp.owner
+  if (!S.capsDraft) S.capsDraft = JSON.parse(JSON.stringify(cp.items))
+  var people = (d.people || []).filter(function (p) { return !p.owner })
+  var h = '<p class="intro">A cap limits what chosen people spend together on AI, all providers and models added up, for the calendar month so far (UTC). At 80% you see a warning here; at the limit the next sign-in of each member comes without AI keys and you get an email and a prompt at the top of this page. Raising the limit lifts it at once. A member can spend a little past the limit: keys already handed out last up to a day, and usage is reported with each renewal. It resets on ' + esc(cp.resetsOn) + '. You are never capped.</p>'
+  if (!mine) h += '<p class="intro"><b>Only the owner can change caps.</b></p>'
+  S.capsDraft.forEach(function (c, i) {
+    var saved = cp.items.filter(function (x) { return x.id === c.id })[0]
+    h += '<div class="card" style="padding:16px;display:flex;flex-direction:column;gap:12px" data-cap="' + i + '">'
+    h += '<div class="bar"><input type="text" data-f="name" value="' + esc(c.name) + '" placeholder="Name" style="flex:1 1 200px" ' + (mine ? '' : 'disabled') + '> <span class="dim">Monthly limit $</span> <input type="text" inputmode="decimal" size="8" data-f="limit" value="' + esc(c.limitUsd || '') + '" ' + (mine ? '' : 'disabled') + '>' +
+      (mine ? ' <button class="btn danger sm" data-del="' + i + '">Remove</button>' : '') + '</div>'
+    if (saved) {
+      h += '<div><div class="bar"><b>' + capUsd(saved.spentUsd) + '</b> <span class="dim">of ' + capUsd(saved.limitUsd) + ' (' + saved.pct + '%)</span>' + (saved.state === 'capped' ? ' <span class="pill off">limit reached</span>' : saved.state === 'warn' ? ' <span class="pill custom">over 80%</span>' : '') + '</div>' + capBar(saved) + '</div>'
+      h += '<div class="chips">' + saved.members.map(function (e) { return '<span class="pill">' + esc(nameOf(e)) + ' ' + capUsd(saved.per[e]) + '</span>' }).join('') + '</div>'
+      if (mine) h += '<div class="bar">' + capRaiseRow(saved, saved.id) + '</div>'
+    }
+    h += '<div class="field"><span class="lbl">Members</span><div class="chips">'
+    people.forEach(function (p) {
+      var other = S.capsDraft.some(function (x, j) { return j !== i && x.members.indexOf(p.e) >= 0 })
+      h += '<label class="pill" style="cursor:pointer;' + (other ? 'opacity:.4' : '') + '"><input type="checkbox" data-m="' + esc(p.e) + '" ' + (c.members.indexOf(p.e) >= 0 ? 'checked ' : '') + (other || !mine ? 'disabled' : '') + '> ' + esc(p.name || p.e) + '</label>'
+    })
+    h += '</div></div></div>'
+  })
+  if (!S.capsDraft.length) h += '<div class="empty">No caps yet.</div>'
+  if (mine) h += '<div class="bar"><button class="btn" id="capAdd">Add a cap</button><button class="btn primary" id="capSave">Save caps</button></div>'
+  el.innerHTML = h
+}
+function capsRead() {
+  var out = []
+  $('tab-caps').querySelectorAll('[data-cap]').forEach(function (card, i) {
+    var c = S.capsDraft[i]
+    c.name = card.querySelector('[data-f=name]').value
+    c.limitUsd = Number(String(card.querySelector('[data-f=limit]').value).replace(/[$,\s]/g, '')) || 0
+    c.members = Array.prototype.map.call(card.querySelectorAll('input[data-m]:checked'), function (x) { return x.dataset.m })
+  })
+  S.capsDraft.forEach(function (c) { out.push({ id: c.id, name: c.name, monthlyUsd: c.limitUsd, members: c.members }) })
+  return out
+}
+$('tab-caps').addEventListener('click', function (ev) {
+  var b = ev.target.closest('button'); if (!b) return
+  if (b.id === 'capAdd') { capsRead(); S.capsDraft.push({ id: '', name: '', limitUsd: 200, members: [], per: {}, pct: 0 }); renderCaps(); return }
+  if (b.dataset.del) { capsRead(); S.capsDraft.splice(Number(b.dataset.del), 1); renderCaps(); return }
+  if (b.id === 'capSave') { var list = capsRead(); b.disabled = true; call('saveCaps', list).then(function (v) { S.data.caps = v; S.capsDraft = null; renderCapBanner(); renderCaps(); toast('Caps saved') }).catch(function (e) { b.disabled = false; fail(e) }); return }
+  var id = b.dataset.raise || b.dataset.raiseAdd; if (!id) return
+  var to = b.dataset.raise ? $('tab-caps').querySelector('[data-raise-to="' + id + '"]').value.trim() : ''
+  capsRaise(id, to, b.dataset.raiseAdd ? Number(b.dataset.amt) : 0)
+})
+$('tab-caps').addEventListener('change', function (ev) { if (ev.target.matches('input[data-m]')) { capsRead(); renderCaps() } })
 
 function reload() { return call('getAdmin').then(apply) }
 window.addEventListener('beforeunload', function (ev) { if (S.dirty) { ev.preventDefault(); ev.returnValue = '' } })
