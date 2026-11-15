@@ -1,260 +1,505 @@
 <!doctype html>
-<html lang="en" data-site="rh">
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Rabbit Hole — creative production studio for macOS and Windows</title>
-<meta name="description" content="Edit, generate and direct video with AI in one desktop app: a real editor, image, video, sound and 3D generation, a 3D stage for blocking shots, and Snowball, an assistant that runs it all. By The North Watch.">
-<meta name="author" content="The North Watch">
-<meta name="theme-color" content="#0b0a10">
-<link rel="canonical" href="https://rabbit-hole.video/">
-<link rel="icon" href="/landing-favicon.png" type="image/png">
-<link rel="apple-touch-icon" href="nw/img/apple-touch-icon-180.png">
-<meta property="og:title" content="Rabbit Hole">
-<meta property="og:description" content="Go down the rabbit hole. Come back with the film. A creative production studio for macOS and Windows.">
-<meta property="og:type" content="website">
-<meta property="og:url" content="https://rabbit-hole.video/">
-<meta property="og:image" content="https://rabbit-hole.video/nw/img/rh-hero-og.jpg">
-<meta name="twitter:card" content="summary_large_image">
-<link rel="preload" as="image" type="image/webp" imagesrcset="nw/img/rh-hero-960.webp 960w, nw/img/rh-hero-1600.webp 1600w, nw/img/rh-hero-2400.webp 2400w" imagesizes="100vw">
-<link rel="stylesheet" href="nw/nw.css">
-<script src="nw/nw.js" defer></script>
+<title>Rabbit Hole Creative Automation</title>
+<meta name="description" content="Rabbit Hole is a creative-automation pipeline for performance marketing: your local assets and tools bridged with 80+ AI models, 300+ tools on one orchestrated line.">
+<link rel="icon" href="data:image/webp;base64,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">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,650;12..96,750&family=Hanken+Grotesk:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  --bg:#08080a; --bg-2:#0e0e13; --panel:#121219; --line:#23232e; --line-2:#2f2f3d;
+  --ink:#f2f1f7; --ink-2:#b4b2c4; --ink-3:#7d7a90;
+  --violet:#7c5cff; --violet-soft:rgba(124,92,255,.14);
+  --g1:#3f7fd6; --g2:#6f57d6; --g3:#9a4fc0;
+  --grad:linear-gradient(100deg,var(--g1),var(--g2) 50%,var(--g3));
+  --display:"Bricolage Grotesque",system-ui,sans-serif;
+  --body:"Hanken Grotesk",system-ui,sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,monospace;
+  --wrap:1160px; --gutter:clamp(16px,4vw,40px);
+  color-scheme:dark;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{background:var(--bg);scroll-behavior:smooth}
+body{background:var(--bg);color:var(--ink);font:400 17px/1.6 var(--body);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+a{color:inherit}
+.wrap{max-width:var(--wrap);margin:0 auto;padding:0 var(--gutter)}
+.mono{font-family:var(--mono)}
+.eyebrow{font:500 12px/1 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3)}
+.eyebrow b{color:var(--violet);font-weight:500}
+h1,h2,h3{font-family:var(--display);font-weight:650;letter-spacing:-.02em;line-height:1.08}
+h2{font-size:clamp(28px,3.6vw,42px);max-width:20ch}
+.lede{color:var(--ink-2);font-size:clamp(16px,1.6vw,19px);max-width:58ch}
+.btn{display:inline-flex;align-items:center;gap:10px;font:600 15px/1 var(--body);text-decoration:none;padding:14px 22px;border-radius:999px;transition:transform .2s ease,box-shadow .2s ease,background .2s ease}
+.btn-primary{background:var(--grad);color:#fff;box-shadow:0 8px 30px -10px rgba(124,92,255,.7)}
+.btn-primary:hover{transform:translateY(-1px);box-shadow:0 12px 36px -10px rgba(124,92,255,.9)}
+.btn-ghost{border:1px solid var(--line-2);color:var(--ink)}
+.btn-ghost:hover{background:var(--panel)}
+.btn:focus-visible{outline:2px solid var(--violet);outline-offset:3px}
+
+/* nav */
+header.nav{position:sticky;top:0;z-index:20;background:rgba(8,8,10,.78);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid rgba(35,35,46,.6)}
+.nav .wrap{display:flex;align-items:center;justify-content:space-between;height:64px;gap:16px}
+.brand{display:flex;align-items:center;gap:12px;text-decoration:none;min-width:0}
+.brand img{width:32px;height:32px;border-radius:8px;flex:none}
+.lockup{display:flex;align-items:baseline;gap:8px;white-space:nowrap;min-width:0}
+.lockup .name{font:700 17px/1 var(--display);letter-spacing:-.01em}
+.lockup .sub{font:500 13px/1 var(--body);color:var(--ink-3)}
+.nav .btn{padding:10px 16px;font-size:14px}
+@media (max-width:560px){.lockup .sub{display:none}}
+
+/* hero */
+.hero{position:relative;padding:clamp(72px,11vw,140px) 0 clamp(56px,8vw,96px);overflow:hidden}
+.hero::before{content:"";position:absolute;inset:-20% -10% auto;height:620px;background:radial-gradient(closest-side at 70% 40%,rgba(111,87,214,.28),transparent 70%),radial-gradient(closest-side at 25% 30%,rgba(63,127,214,.18),transparent 70%);pointer-events:none}
+.hero .wrap{position:relative}
+.hero h1{font-size:clamp(40px,6.6vw,84px);font-weight:750;max-width:15ch;margin:22px 0 22px}
+.hero h1 .grad{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero .lede{margin-bottom:34px}
+.ctas{display:flex;flex-wrap:wrap;gap:12px}
+.hero-meta{display:flex;flex-wrap:wrap;gap:10px 28px;margin-top:48px;padding-top:24px;border-top:1px solid var(--line);font:400 13px/1.4 var(--mono);color:var(--ink-3)}
+.hero-meta strong{color:var(--ink);font-weight:500}
+
+/* sections */
+section{padding:clamp(64px,9vw,112px) 0;border-top:1px solid var(--line)}
+.sec-head{display:grid;gap:16px;margin-bottom:clamp(32px,5vw,56px)}
+
+/* makes */
+.makes{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
+.make{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:22px 20px 20px;display:flex;flex-direction:column;gap:12px;min-height:170px;transition:border-color .25s ease,transform .25s ease}
+.make:hover{border-color:var(--line-2);transform:translateY(-2px)}
+.make svg{width:28px;height:28px;stroke:var(--violet);fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.make h3{font-size:19px;font-weight:650}
+.make p{color:var(--ink-2);font-size:14.5px;line-height:1.5}
+.multi{display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin-top:12px;border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.multi div{padding:18px 20px;border-right:1px solid var(--line)}
+.multi div:last-child{border-right:0}
+.multi dt{font:500 11px/1 var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--violet);margin-bottom:8px}
+.multi dd{color:var(--ink-2);font-size:14.5px;line-height:1.45}
+@media (max-width:1000px){.makes{grid-template-columns:repeat(3,1fr)}.multi{grid-template-columns:repeat(2,1fr)}.multi div:nth-child(2){border-right:0}.multi div:nth-child(-n+2){border-bottom:1px solid var(--line)}}
+@media (max-width:640px){.makes{grid-template-columns:1fr 1fr}.make{min-height:0}.make:last-child{grid-column:1/-1}.multi{grid-template-columns:1fr}.multi div{border-right:0;border-bottom:1px solid var(--line)}.multi div:last-child{border-bottom:0}}
+
+/* schematic */
+#bridge{background:radial-gradient(900px 500px at 50% 55%,rgba(124,92,255,.08),transparent 70%),var(--bg)}
+.schem{position:relative;border:1px solid var(--line);border-radius:18px;background:linear-gradient(180deg,rgba(18,18,25,.7),rgba(8,8,10,.7));padding:clamp(8px,2vw,24px);overflow:hidden}
+.schem::before{content:"";position:absolute;inset:0;background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);background-size:32px 32px;opacity:.25;mask-image:radial-gradient(closest-side,#000,transparent);-webkit-mask-image:radial-gradient(closest-side,#000,transparent);pointer-events:none}
+.schem svg{display:block;width:100%;height:auto;position:relative}
+.schem text{font-family:var(--body)}
+.s-col{font:500 11px var(--mono);letter-spacing:.14em;fill:var(--ink-3);text-transform:uppercase}
+.s-node rect{fill:#14141c;stroke:var(--line-2)}
+.s-node .t{font:600 14px var(--body);fill:var(--ink)}
+.s-node .d{font:400 11.5px var(--body);fill:var(--ink-3)}
+.s-node .dot{fill:var(--violet)}
+.s-core-box{fill:#110f1d;stroke:url(#coreStroke);stroke-width:1.5}
+.s-core-title{font:650 20px var(--display);fill:var(--ink)}
+.s-core-k{font:500 10.5px var(--mono);letter-spacing:.14em;fill:var(--violet)}
+.s-stage rect{fill:rgba(124,92,255,.10);stroke:rgba(124,92,255,.35)}
+.s-stage text{font:500 12px var(--mono);fill:var(--ink-2)}
+.s-stage.on rect{fill:rgba(124,92,255,.32);stroke:var(--violet)}
+.s-stage.on text{fill:#fff}
+.s-stage rect,.s-stage text{transition:fill .4s ease,stroke .4s ease}
+.s-foot{font:400 11.5px var(--mono);fill:var(--ink-3)}
+.wire{fill:none;stroke:var(--line-2);stroke-width:1.4}
+.flow{fill:none;stroke:url(#wireGrad);stroke-width:2;stroke-linecap:round;stroke-dasharray:6 22;animation:flow 2.4s linear infinite}
+.flow.rev{animation-direction:reverse}
+@keyframes flow{to{stroke-dashoffset:-56}}
+.halo{transform-origin:center;transform-box:fill-box;animation:halo 3.2s ease-in-out infinite}
+@keyframes halo{0%,100%{opacity:.35}50%{opacity:.9}}
+.legend{display:flex;flex-wrap:wrap;gap:10px 28px;margin-top:20px;color:var(--ink-3);font-size:14px}
+.legend span::before{content:"";display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--violet);margin-right:8px;vertical-align:1px}
+
+/* loop */
+.loop{list-style:none;display:grid;grid-template-columns:repeat(6,1fr);gap:0;counter-reset:step;position:relative}
+.step{position:relative;padding:22px 18px 0 0}
+.step::before{counter-increment:step;content:"0" counter(step);font:500 12px var(--mono);color:var(--violet);display:block;margin-bottom:14px}
+.step::after{content:"";position:absolute;top:30px;left:30px;right:10px;height:1px;background:linear-gradient(90deg,var(--line-2),var(--line-2) 70%,transparent)}
+.step:last-child::after{display:none}
+.step h3{font-size:17px;font-weight:650;margin-bottom:6px}
+.step p{color:var(--ink-2);font-size:14px;line-height:1.5}
+.loop-back{display:flex;align-items:center;gap:12px;margin-top:22px;font:500 12.5px var(--mono);color:var(--ink-3)}
+.loop-back svg{flex:none;stroke:var(--violet);fill:none;stroke-width:1.5}
+.wiring{display:grid;grid-template-columns:1.2fr 1fr;gap:12px;margin-top:40px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:24px}
+.card h3{font-size:19px;margin-bottom:8px}
+.card p{color:var(--ink-2);font-size:15px}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
+.chip{font:500 12.5px/1 var(--mono);color:var(--ink);border:1px solid var(--line-2);border-radius:999px;padding:9px 13px;background:var(--bg-2)}
+.chip.dim{color:var(--ink-3);border-style:dashed}
+@media (max-width:1000px){.loop{grid-template-columns:repeat(3,1fr);row-gap:28px}.step:nth-child(3)::after{display:none}}
+@media (max-width:640px){.loop{grid-template-columns:1fr;row-gap:0}.step{padding:0 0 22px 34px;border-left:1px solid var(--line-2);margin-left:6px}.step::before{position:absolute;left:-1px;transform:translateX(-50%);top:0;background:var(--bg);padding:2px 0}.step::after{display:none}.step h3{padding-top:0}.wiring{grid-template-columns:1fr}}
+
+/* numbers */
+.nums{display:grid;grid-template-columns:repeat(3,1fr);border:1px solid var(--line);border-radius:18px;overflow:hidden}
+.num{padding:clamp(22px,3vw,34px);border-right:1px solid var(--line);border-bottom:1px solid var(--line)}
+.num:nth-child(3n){border-right:0}
+.num:nth-last-child(-n+3){border-bottom:0}
+.num .v{font:500 clamp(40px,5vw,60px)/1 var(--mono);letter-spacing:-.03em;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;display:inline-block}
+.num .l{margin-top:12px;color:var(--ink);font-weight:600;font-size:16px}
+.num .s{color:var(--ink-3);font-size:14px;margin-top:2px}
+@media (max-width:760px){.nums{grid-template-columns:1fr 1fr}.num{border-right:1px solid var(--line)!important;border-bottom:1px solid var(--line)!important}.num:nth-child(2n){border-right:0!important}.num:nth-last-child(-n+2){border-bottom:0!important}}
+
+/* close */
+.close{text-align:center;padding:clamp(80px,11vw,140px) 0;position:relative;overflow:hidden}
+.close::before{content:"";position:absolute;left:50%;top:50%;width:900px;height:500px;transform:translate(-50%,-50%);background:radial-gradient(closest-side,rgba(124,92,255,.22),transparent 70%);pointer-events:none}
+.close .wrap{position:relative}
+.close h2{margin:18px auto 18px;max-width:18ch;font-size:clamp(32px,4.6vw,56px)}
+.close .lede{margin:0 auto 34px}
+.close .ctas{justify-content:center}
+.small{font-size:13px;color:var(--ink-3);margin-top:18px}
+footer{border-top:1px solid var(--line);padding:28px 0;color:var(--ink-3);font-size:13.5px}
+footer .wrap{display:flex;flex-wrap:wrap;gap:10px 24px;justify-content:space-between}
+footer a{text-decoration:none}
+footer a:hover{color:var(--ink)}
+
+/* load + reveal choreography */
+.js .rise{opacity:0;transform:translateY(14px)}
+.js .ready .rise{opacity:1;transform:none;transition:opacity .8s cubic-bezier(.2,.7,.2,1),transform .8s cubic-bezier(.2,.7,.2,1);transition-delay:calc(var(--i,0) * 90ms)}
+.js .reveal{opacity:0;transform:translateY(18px)}
+.js .reveal.in{opacity:1;transform:none;transition:opacity .9s cubic-bezier(.2,.7,.2,1),transform .9s cubic-bezier(.2,.7,.2,1);transition-delay:calc(var(--i,0) * 70ms)}
+
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  .flow,.halo{animation:none}
+  .flow{stroke-dasharray:none;opacity:.5}
+  .js .rise,.js .reveal{opacity:1!important;transform:none!important;transition:none!important}
+  .btn,.make{transition:none}
+}
+</style>
 </head>
 <body>
-<a class="skip" href="#desktop">Skip to what it does</a>
+<script>document.documentElement.classList.add('js')</script>
 
-<nav class="strip" aria-label="The North Watch family">
+<header class="nav">
   <div class="wrap">
-    <a href="https://thenorthwatch.eu">The North Watch</a>
-    <span class="sep" aria-hidden="true">/</span>
-    <a href="./" aria-current="page">Rabbit Hole</a>
-  </div>
-</nav>
-
-<header class="bar">
-  <div class="wrap">
-    <a class="brand" href="./"><img class="app-icon" src="nw/img/rh-icon-64.webp" srcset="nw/img/rh-icon-64.webp 1x, nw/img/rh-icon-128.webp 2x" alt="" width="34" height="34"><span class="wordmark">Rabbit Hole</span></a>
-    <nav class="nav" aria-label="Primary">
-      <a class="opt" href="#desktop">Desktop</a>
-      <a class="opt" href="#snowball">Snowball</a>
-      <a class="opt" href="#online">Online</a>
-      <a class="btn btn--primary btn--sm" href="#status">Ask for access</a>
-    </nav>
+    <a class="brand" href="#top" aria-label="Rabbit Hole, Creative Automation">
+      <img src="data:image/webp;base64,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" alt="" width="32" height="32">
+      <span class="lockup"><span class="name">Rabbit Hole</span><span class="sub">— Creative Automation</span></span>
+    </a>
+    <a class="btn btn-primary" href="mailto:support@thenorthwatch.eu?subject=Rabbit%20Hole%20demo">Book a demo</a>
   </div>
 </header>
 
-<main>
-  <section class="hero" style="--hero-focus-mobile: 62% center">
-    <picture>
-      <source type="image/webp" srcset="nw/img/rh-hero-960.webp 960w, nw/img/rh-hero-1600.webp 1600w, nw/img/rh-hero-2400.webp 2400w" sizes="100vw">
-      <img src="nw/img/rh-hero-1600.jpg" alt="A white rabbit at the edge of a glowing hole that spirals down into film frames" width="1600" height="679" fetchpriority="high">
-    </picture>
+<main id="top">
+  <!-- 1 · Hero -->
+  <div class="hero" id="hero">
     <div class="wrap">
-      <span class="eyebrow">Creative production studio · macOS and Windows</span>
-      <h1 class="display">Go down the rabbit hole. Come back with the film.</h1>
-      <p class="lead">Edit, generate and direct video with AI, in one desktop app.</p>
-      <div class="actions">
-        <a class="btn btn--primary" href="#action">See it in action</a>
-        <a class="btn btn--ghost btn--on-image" href="#snowball">Meet Snowball</a>
+      <p class="eyebrow rise" style="--i:0">Creative automation for <b>performance marketing</b></p>
+      <h1 class="rise" style="--i:1">Your assets. Every AI model. <span class="grad">One production line.</span></h1>
+      <p class="lede rise" style="--i:2"><strong>300+ custom tools and 80+ AI models, wired into a single pipeline.</strong> Rabbit Hole bridges the files and tools you already have with the models you need, from brief to finished ads, iterated, localised and cut for every network.</p>
+      <div class="ctas rise" style="--i:3">
+        <a class="btn btn-primary" href="mailto:support@thenorthwatch.eu?subject=Rabbit%20Hole%20demo">Book a demo</a>
+        <a class="btn btn-ghost" href="#bridge">See how it connects</a>
       </div>
+      <div class="hero-meta rise" style="--i:4">
+        <span><strong>300+</strong> tools</span>
+        <span><strong>80+</strong> AI models</span>
+        <span><strong>1</strong> pipeline</span>
+        <span><strong>20</strong> concepts overnight</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2 · What it makes -->
+  <section id="makes" aria-labelledby="makes-h">
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="eyebrow reveal">What it makes</p>
+        <h2 id="makes-h" class="reveal" style="--i:1">Every format your campaigns run on, from one tool.</h2>
+      </div>
+      <div class="makes">
+        <article class="make reveal" style="--i:0">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 20 7.5v9L12 21l-8-4.5v-9z"/><path d="M12 12 20 7.5M12 12 4 7.5M12 12v9"/></svg>
+          <h3>3D video</h3><p>Sets, characters and shots built in 3D, then rendered to film.</p>
+        </article>
+        <article class="make reveal" style="--i:1">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m10 9 5 3-5 3z"/></svg>
+          <h3>2D &amp; motion</h3><p>Generated footage, gameplay and animated titles, edited and mixed.</p>
+        </article>
+        <article class="make reveal" style="--i:2">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="7" y="2.5" width="10" height="19" rx="2.5"/><circle cx="12" cy="10" r="2.4"/><path d="M8.8 16.2c.8-1.6 1.9-2.4 3.2-2.4s2.4.8 3.2 2.4"/></svg>
+          <h3>UGC video</h3><p>Creator-style talking-head ads with a consistent cast.</p>
+        </article>
+        <article class="make reveal" style="--i:3">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="1.8"/><path d="m21 15-5-5L5 21"/></svg>
+          <h3>Statics</h3><p>Banners and store images from the same brief and brand kit.</p>
+        </article>
+        <article class="make reveal" style="--i:4">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="6.5" width="19" height="11" rx="5.5"/><path d="M7.5 10.2v3.6M5.7 12h3.6"/><circle cx="15.5" cy="11" r=".9"/><circle cx="17.6" cy="13.2" r=".9"/></svg>
+          <h3>Playable ads</h3><p>Interactive ads re-dressed and exported per ad network.</p>
+        </article>
+      </div>
+      <dl class="multi reveal" style="--i:2">
+        <div><dt>Iteration</dt><dd>A winning ad comes back as a six-version test package.</dd></div>
+        <div><dt>Localisation</dt><dd>Translated, voiced, subtitled and culturalised for 37 markets.</dd></div>
+        <div><dt>Every ratio</dt><dd>9:16, 4:5, 1:1 and 16:9 from one master edit.</dd></div>
+        <div><dt>Every network</dt><dd>Lengths, sizes and specs per network, named and delivered.</dd></div>
+      </dl>
     </div>
   </section>
 
-  <section class="section" id="action" aria-labelledby="action-title">
+  <!-- 3 · The bridge schematic -->
+  <section id="bridge" aria-labelledby="bridge-h">
     <div class="wrap">
-      <div class="section-head reveal">
-        <h2 class="h2" id="action-title">In action</h2>
-        <p class="lead">Real screens from the app, cutting an Avete Morituri teaser.</p>
+      <div class="sec-head">
+        <p class="eyebrow reveal">The Rabbit Hole schematic</p>
+        <h2 id="bridge-h" class="reveal" style="--i:1">The bridge between your assets and the models.</h2>
+        <p class="lede reveal" style="--i:2">Your footage, brand kits and builds stay on your machines. Rabbit Hole sends each job to the right model, brings the result back to your files, and runs 300+ custom tools across 80+ models on one line to finish it, following the production rules you teach it.</p>
       </div>
-      <figure class="shot shot--hero reveal">
-        <div class="shot__frame"><picture><source type="image/webp" srcset="nw/img/shot-01-editor-1200.webp 1200w, nw/img/shot-01-editor-2000.webp 2000w" sizes="(min-width: 1200px) 1150px, 100vw"><img src="nw/img/shot-01-editor-2000.jpg" alt="The editor: Gameplay shots, a title and a music track on the timeline: a 15-second teaser." width="2880" height="1732" loading="lazy"></picture></div>
-        <figcaption><b>The editor</b><span>Gameplay shots, a title and a music track on the timeline: a 15-second teaser.</span></figcaption>
+      <figure class="schem reveal" style="--i:2">
+        <svg id="schematic" role="img" aria-labelledby="schem-title schem-desc" viewBox="0 0 1200 620">
+          <title id="schem-title">Rabbit Hole schematic</title>
+          <desc id="schem-desc">Local assets and your own tools on the left connect to the Rabbit Hole orchestrated pipeline in the centre, which runs brief, script, generate, edit, QA and deliver stages and routes work to AI models on the right: language, image, video, voice and sound, 3D, and upscaling.</desc>
+        </svg>
       </figure>
-      <div class="shots shots--two" style="margin-top: var(--s7)">
-      <figure class="shot reveal">
-        <div class="shot__frame"><picture><source type="image/webp" srcset="nw/img/shot-02-ai-gen-1200.webp 1200w, nw/img/shot-02-ai-gen-2000.webp 2000w" sizes="(min-width: 900px) 50vw, 100vw"><img src="nw/img/shot-02-ai-gen-2000.jpg" alt="AI Gen: A new arena from a prompt and three reference stills; earlier results wait in the history." width="2880" height="1732" loading="lazy"></picture></div>
-        <figcaption><b>AI Gen</b><span>A new arena from a prompt and three reference stills; earlier results wait in the history.</span></figcaption>
-      </figure>
-      <figure class="shot reveal">
-        <div class="shot__frame"><picture><source type="image/webp" srcset="nw/img/shot-07-canvas-1200.webp 1200w, nw/img/shot-07-canvas-2000.webp 2000w" sizes="(min-width: 900px) 50vw, 100vw"><img src="nw/img/shot-07-canvas-2000.jpg" alt="Canvas: A prompt feeds two images, and the two images feed a video." width="2880" height="1732" loading="lazy"></picture></div>
-        <figcaption><b>Canvas</b><span>A prompt feeds two images, and the two images feed a video.</span></figcaption>
-      </figure>
-      <figure class="shot reveal">
-        <div class="shot__frame"><picture><source type="image/webp" srcset="nw/img/shot-03-3d-stage-1200.webp 1200w, nw/img/shot-03-3d-stage-2000.webp 2000w" sizes="(min-width: 900px) 50vw, 100vw"><img src="nw/img/shot-03-3d-stage-2000.jpg" alt="3D Stage: Two mannequins on an arena set, seen through the camera of shot 2 of 4." width="2880" height="1732" loading="lazy"></picture></div>
-        <figcaption><b>3D Stage</b><span>Two mannequins on an arena set, seen through the camera of shot 2 of 4.</span></figcaption>
-      </figure>
-      <figure class="shot reveal">
-        <div class="shot__frame"><picture><source type="image/webp" srcset="nw/img/shot-05-motion-1200.webp 1200w, nw/img/shot-05-motion-2000.webp 2000w" sizes="(min-width: 900px) 50vw, 100vw"><img src="nw/img/shot-05-motion-2000.jpg" alt="Motion: An animated title card over gameplay, one of four designed overlay sections." width="2880" height="1732" loading="lazy"></picture></div>
-        <figcaption><b>Motion</b><span>An animated title card over gameplay, one of four designed overlay sections.</span></figcaption>
-      </figure>
-      </div>
+      <div class="legend reveal" style="--i:3"><span>Local-first: files stay on your disk</span><span>Prompts go straight to the provider you pick</span><span>Swap any model without rebuilding the line</span></div>
     </div>
   </section>
 
-  <section class="section" id="desktop" aria-labelledby="desktop-title">
+  <!-- 4 · Intelligence loop -->
+  <section id="loop" aria-labelledby="loop-h">
     <div class="wrap">
-      <div class="section-head reveal">
-        <div style="display: flex; flex-direction: column; gap: 10px">
-          <span class="eyebrow">Offline · on your desk</span>
-          <h2 class="h2" id="desktop-title">The whole studio runs on your machine.</h2>
+      <div class="sec-head">
+        <p class="eyebrow reveal">The intelligence loop</p>
+        <h2 id="loop-h" class="reveal" style="--i:1">Campaigns that keep performing, because the data drives the next round.</h2>
+      </div>
+      <ol class="loop">
+        <li class="step reveal" style="--i:0"><h3>Market research</h3><p>Competitor ads and trends read from your market data.</p></li>
+        <li class="step reveal" style="--i:1"><h3>Brief</h3><p>Tickets and orders become a production plan.</p></li>
+        <li class="step reveal" style="--i:2"><h3>Production</h3><p>Models and tools make the cut, checked against your doctrine.</p></li>
+        <li class="step reveal" style="--i:3"><h3>Delivery</h3><p>Finals in every ratio and language, filed where the team works.</p></li>
+        <li class="step reveal" style="--i:4"><h3>Performance</h3><p>UA data shows which ads win and why.</p></li>
+        <li class="step reveal" style="--i:5"><h3>Next iteration</h3><p>Winners are iterated automatically. The loop starts again.</p></li>
+      </ol>
+      <p class="loop-back reveal" style="--i:6"><svg width="36" height="18" viewBox="0 0 36 18" aria-hidden="true"><path d="M34 4H8a5 5 0 0 0 0 10h4"/><path d="m29 0 5 4-5 4"/></svg>Every round feeds the next brief.</p>
+
+      <div class="wiring">
+        <div class="card reveal" style="--i:0">
+          <h3>Wired into how you already work</h3>
+          <p>Connects to your market intelligence, project tracking, asset library and performance data. Anything else with an API plugs in the same way.</p>
+          <div class="chips">
+            <span class="chip">Sensor Tower</span><span class="chip">Jira</span><span class="chip">DAM</span><span class="chip">UA analytics</span><span class="chip">Google Drive</span><span class="chip dim">+ any API you connect</span>
+          </div>
         </div>
-        <p class="lead">Rendered on your own GPU. Your files stay on your disk.</p>
-      </div>
-
-      <div class="mosaic">
-        <article class="tile tile--6 reveal">
-          <picture>
-            <source type="image/webp" srcset="nw/img/ratios-640.webp 640w, nw/img/ratios-1280.webp 1280w, nw/img/ratios-1920.webp 1920w" sizes="100vw">
-            <img src="nw/img/ratios-1280.jpg" alt="The same film frame in a tall, a square and a wide shape, floating in violet light" width="1280" height="720" loading="lazy">
-          </picture>
-          <div class="tile__body">
-            <h3>Cut once. Export every ratio and language.</h3>
-            <p>A real multi-track editor, and one export pass for every shape and every locale.</p>
-          </div>
-        </article>
-        <article class="tile tile--3 reveal">
-          <picture>
-            <source type="image/webp" srcset="nw/img/generate-640.webp 640w, nw/img/generate-1280.webp 1280w" sizes="(min-width: 720px) 50vw, 100vw">
-            <img src="nw/img/generate-1280.jpg" alt="A prism splitting light into photographs, a sound wave, film frames and a small 3D lighthouse" width="1280" height="720" loading="lazy">
-          </picture>
-          <div class="tile__body">
-            <h3>AI Gen</h3>
-            <p>Image, video, sound and 3D from many models. ✨ Enhance writes the prompt.</p>
-          </div>
-        </article>
-        <article class="tile tile--3 reveal">
-          <picture>
-            <source type="image/webp" srcset="nw/img/stage-640.webp 640w, nw/img/stage-1280.webp 1280w" sizes="(min-width: 720px) 50vw, 100vw">
-            <img src="nw/img/stage-1280.jpg" alt="Wooden mannequins on a miniature pier set with a tiny film camera and a light" width="1280" height="720" loading="lazy">
-          </picture>
-          <div class="tile__body">
-            <h3>3D Stage</h3>
-            <p>Block the shot with props and acting mannequins, then generate it.</p>
-          </div>
-        </article>
-        <article class="tile tile--3 reveal">
-          <picture>
-            <source type="image/webp" srcset="nw/img/motion-640.webp 640w, nw/img/motion-1280.webp 1280w" sizes="(min-width: 720px) 50vw, 100vw">
-            <img src="nw/img/motion-1280.jpg" alt="Violet and white light bars sweeping through darkness" width="1280" height="720" loading="lazy">
-          </picture>
-          <div class="tile__body">
-            <h3>Motion</h3>
-            <p>Animated titles, captions and transitions, ready for the timeline.</p>
-          </div>
-        </article>
-        <article class="tile tile--3 reveal">
-          <picture>
-            <source type="image/webp" srcset="nw/img/voice-640.webp 640w, nw/img/voice-1280.webp 1280w" sizes="(min-width: 720px) 50vw, 100vw">
-            <img src="nw/img/voice-1280.jpg" alt="A vintage microphone whose sound wave splits into many glowing ribbons" width="1280" height="720" loading="lazy">
-          </picture>
-          <div class="tile__body">
-            <h3>Localise and dub</h3>
-            <p>Translate, voice and subtitle every language from one master.</p>
-          </div>
-        </article>
-      </div>
-
-      <div class="chips reveal" style="margin-top: var(--s6)" aria-label="AI Gen modes">
-        <span class="chip">Image</span><span class="chip">Inpaint</span><span class="chip">Upscale</span><span class="chip">Video</span><span class="chip">Canvas</span><span class="chip">Audio</span><span class="chip">3D Asset</span><span class="chip">3D Stage</span><span class="chip">Agent</span>
+        <div class="card reveal" style="--i:1">
+          <h3>Taught how production is done</h3>
+          <p>A written production doctrine sets pacing, sound mix, subtitles, footage rules and checks. Customise it, and every ad delivers your standards automatically.</p>
+        </div>
       </div>
     </div>
   </section>
 
-  <section class="section" id="snowball" aria-labelledby="snowball-title" style="padding-top: 0">
-    <div class="wrap split reveal">
-      <div class="split__media">
-        <picture>
-          <source type="image/webp" srcset="nw/img/snowball-640.webp 640w, nw/img/snowball-1100.webp 1100w" sizes="(min-width: 900px) 45vw, 100vw">
-          <img src="nw/img/snowball-1100.jpg" alt="Snowball, a white fluffy rabbit, beside a vintage studio microphone" width="1100" height="1366" loading="lazy">
-        </picture>
-      </div>
-      <div style="display: flex; flex-direction: column; gap: var(--s5)">
-        <span class="eyebrow">The assistant · ⌘J</span>
-        <h2 class="h2" id="snowball-title">Meet Snowball.</h2>
-        <p class="lead">Say what you want. Snowball plans it and works across the app while you watch.</p>
-        <ul class="ticks">
-          <li><span><b>Claude, Gemini or GPT</b>, picked per message.</span></li>
-          <li><span><b>Ask first</b> or <b>full access</b>: you decide.</span></li>
-          <li><span><b>Talk</b>: ask out loud, hear the answer.</span></li>
-          <li><span><b>Your MCP servers and skills</b> come along.</span></li>
-        </ul>
-      </div>
-    </div>
-    <div class="wrap" style="margin-top: var(--s8)">
-      <figure class="shot shot--hero reveal">
-        <div class="shot__frame"><picture><source type="image/webp" srcset="nw/img/shot-04-snowball-1200.webp 1200w, nw/img/shot-04-snowball-2000.webp 2000w" sizes="(min-width: 1200px) 1150px, 100vw"><img src="nw/img/shot-04-snowball-2000.jpg" alt="Snowball at work: Asked for a 15-second teaser with the arena intro, it cut one and listed every step it took." width="2880" height="1732" loading="lazy"></picture></div>
-        <figcaption><b>Snowball at work</b><span>Asked for a 15-second teaser with the arena intro, it cut one and listed every step it took.</span></figcaption>
-      </figure>
-    </div>
-  </section>
-
-  <section class="section" id="online" aria-labelledby="online-title" style="padding-top: 0">
+  <!-- 5 · Proof -->
+  <section id="proof" aria-labelledby="proof-h">
     <div class="wrap">
-      <div class="mosaic">
-        <article class="tile tile--6 reveal">
-          <picture>
-            <source type="image/webp" srcset="nw/img/sync-800.webp 800w, nw/img/sync-1600.webp 1600w" sizes="100vw">
-            <img src="nw/img/sync-1600.jpg" alt="Two desks far apart, each laptop sending a thread of violet light up to one small glowing cloud" width="1600" height="900" loading="lazy">
-          </picture>
-          <div class="tile__body">
-            <span class="eyebrow">Online · when you want it</span>
-            <h3 id="online-title">Sign in to work as a team.</h3>
-            <p>Your footage stays put. The shared pieces travel.</p>
-          </div>
-        </article>
+      <div class="sec-head">
+        <p class="eyebrow reveal">In production today</p>
+        <h2 id="proof-h" class="reveal" style="--i:1">The numbers behind the line.</h2>
       </div>
-      <div class="facts reveal" style="margin-top: var(--s5)">
-        <div class="fact"><span class="k">Sign in</span><p>Email and password, or Google.</p></div>
-        <div class="fact"><span class="k">Organisations</span><p>Admins choose who uses which parts.</p></div>
-        <div class="fact"><span class="k">Drive sync</span><p>Your own Google Drive keeps your Mac and PC in step.</p></div>
-        <div class="fact"><span class="k">Web admin</span><p>People, modules and keys, from the browser.</p></div>
+      <div class="nums">
+        <div class="num reveal" style="--i:0"><span class="v" data-to="20">20</span><p class="l">concepts overnight</p><p class="s">From brief to cuts while the team sleeps.</p></div>
+        <div class="num reveal" style="--i:1"><span class="v" data-to="300" data-suffix="+">300+</span><p class="l">tools on one pipeline</p><p class="s">Actions the AI runs itself: generate, edit, render, check, deliver.</p></div>
+        <div class="num reveal" style="--i:2"><span class="v" data-to="80" data-suffix="+">80+</span><p class="l">AI models orchestrated</p><p class="s">Language, image, video, voice, 3D.</p></div>
+        <div class="num reveal" style="--i:3"><span class="v" data-to="37">37</span><p class="l">markets to culturalise for</p><p class="s">Language, voice and local detail.</p></div>
+        <div class="num reveal" style="--i:4"><span class="v" data-to="6">6</span><p class="l">versions per winner</p><p class="s">An iteration package built to test.</p></div>
+        <div class="num reveal" style="--i:5"><span class="v" data-to="11">11</span><p class="l">ad networks for playables</p><p class="s">Exported to each network's spec.</p></div>
       </div>
     </div>
   </section>
 
-  <section class="section" aria-labelledby="connect-title" style="padding-top: 0">
-    <div class="wrap reveal" style="display: flex; flex-direction: column; gap: var(--s5)">
-      <div style="display: flex; flex-direction: column; gap: 10px">
-        <span class="eyebrow">Works with</span>
-        <h2 class="h2" id="connect-title">Drive it from anywhere that speaks MCP.</h2>
-      </div>
-      <div class="chips">
-        <span class="chip">Claude Desktop</span><span class="chip">Claude Code</span><span class="chip">Unreal Engine</span><span class="chip">Blender</span><span class="chip">After Effects</span><span class="chip">Premiere Pro</span>
-      </div>
-    </div>
-  </section>
-
-  <section class="band" aria-labelledby="privacy-title">
+  <!-- 6 · Close -->
+  <section class="close" aria-labelledby="close-h">
     <div class="wrap">
-      <div>
-        <h2 class="h3" id="privacy-title">Your work stays yours.</h2>
-        <p class="muted">Projects and footage stay on your computer. Prompts go straight to the AI provider you pick. No cookies, analytics or ads here.</p>
-      </div>
-      <a class="btn btn--ghost btn--sm" href="/privacy/">Privacy</a>
-    </div>
-  </section>
-
-  <section class="section" id="status" aria-labelledby="status-title">
-    <div class="wrap">
-      <h2 class="h2 reveal" id="status-title" style="margin-bottom: var(--s6)">In production, in the open.</h2>
-      <div class="facts reveal">
-        <div class="fact"><span class="k">Version</span><span class="v">2.0</span><p>October 2026 · macOS (Apple Silicon) and Windows · updates itself</p></div>
-        <div class="fact"><span class="k">Access</span><span class="v">By arrangement</span><p>Licensed to teams. <a href="mailto:support@thenorthwatch.eu">support@thenorthwatch.eu</a></p></div>
-        <div class="fact"><span class="k">Made by</span><span class="v">The North Watch</span><p><a href="https://thenorthwatch.eu">thenorthwatch.eu</a> · Slovenia</p></div>
-      </div>
+      <p class="eyebrow reveal">Rabbit Hole — Creative Automation</p>
+      <h2 id="close-h" class="reveal" style="--i:1">Remove the production bottleneck.</h2>
+      <p class="lede reveal" style="--i:2">See your own assets go through the line in a 30-minute walkthrough.</p>
+      <div class="ctas reveal" style="--i:3"><a class="btn btn-primary" href="mailto:support@thenorthwatch.eu?subject=Rabbit%20Hole%20demo">Book a demo</a></div>
+      <p class="small reveal" style="--i:4">Licensed to teams · macOS and Windows</p>
     </div>
   </section>
 </main>
 
-<footer class="foot">
+<footer>
   <div class="wrap">
-    <div class="brandline"><img src="nw/img/rh-icon-64.webp" alt="" width="28" height="28" style="border-radius: 22.5%">© 2026 The North Watch · rabbit-hole.video</div>
-    <a class="byline" href="https://thenorthwatch.eu"><img src="nw/img/seal.svg" alt="" width="20" height="25">A North Watch product</a>
-    <nav class="links" aria-label="Footer">
-      <a href="/privacy/">Privacy</a>
-      <a href="https://thenorthwatch.eu">The North Watch</a>
-    </nav>
+    <span>© 2026 The North Watch · rabbit-hole.video</span>
+    <span><a href="privacy/">Privacy</a> · <a href="https://thenorthwatch.eu">thenorthwatch.eu</a></span>
   </div>
 </footer>
+
+<script>
+(function(){
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var NS = 'http://www.w3.org/2000/svg';
+
+  /* ---------- schematic ---------- */
+  var LEFT = [
+    {t:'Local footage & assets', d:'Gameplay, renders, stock'},
+    {t:'Brand kits & references', d:'Logos, fonts, style plates'},
+    {t:'Builds & playables', d:'Game builds, HTML5 sources'},
+    {t:'Your creative tools', d:'Blender, After Effects, Premiere, Unreal'}
+  ];
+  var RIGHT = [
+    {t:'Language', d:'Claude, Gemini, GPT'},
+    {t:'Image', d:'Nano Banana, FLUX, Seedream'},
+    {t:'Video', d:'Seedance, Veo, Kling, MiniMax'},
+    {t:'Voice & sound', d:'ElevenLabs voice, SFX, music'},
+    {t:'3D', d:'Tripo, Hunyuan3D, Hyper3D'},
+    {t:'Upscale & finish', d:'Topaz, background removal'}
+  ];
+  var STAGES = ['Brief','Script','Generate','Edit','QA','Deliver'];
+
+  function el(name, attrs, parent, text){
+    var e = document.createElementNS(NS, name);
+    for (var k in attrs) e.setAttribute(k, attrs[k]);
+    if (text != null) e.textContent = text;
+    if (parent) parent.appendChild(e);
+    return e;
+  }
+  function node(g, x, y, w, h, n){
+    var gg = el('g', {'class':'s-node'}, g);
+    el('rect', {x:x, y:y, width:w, height:h, rx:12}, gg);
+    el('circle', {'class':'dot', cx:x+18, cy:y+h/2, r:3.5}, gg);
+    el('text', {'class':'t', x:x+32, y:y+h/2-3}, gg, n.t);
+    el('text', {'class':'d', x:x+32, y:y+h/2+15}, gg, n.d);
+  }
+  function wire(g, d, rev){
+    el('path', {'class':'wire', d:d}, g);
+    el('path', {'class':'flow' + (rev ? ' rev' : ''), d:d}, g);
+  }
+  function defs(svg){
+    var d = el('defs', {}, svg);
+    var lg = el('linearGradient', {id:'wireGrad', x1:'0', y1:'0', x2:'1', y2:'0'}, d);
+    el('stop', {offset:'0', 'stop-color':'#3f7fd6'}, lg);
+    el('stop', {offset:'.5', 'stop-color':'#6f57d6'}, lg);
+    el('stop', {offset:'1', 'stop-color':'#9a4fc0'}, lg);
+    var cs = el('linearGradient', {id:'coreStroke', x1:'0', y1:'0', x2:'1', y2:'1'}, d);
+    el('stop', {offset:'0', 'stop-color':'#3f7fd6'}, cs);
+    el('stop', {offset:'.5', 'stop-color':'#6f57d6'}, cs);
+    el('stop', {offset:'1', 'stop-color':'#9a4fc0'}, cs);
+    var rg = el('radialGradient', {id:'coreGlow'}, d);
+    el('stop', {offset:'0', 'stop-color':'#7c5cff', 'stop-opacity':'.45'}, rg);
+    el('stop', {offset:'1', 'stop-color':'#7c5cff', 'stop-opacity':'0'}, rg);
+  }
+  var stageEls = [], svg;
+  function core(g, x, y, w, h, compact){
+    el('ellipse', {'class':'halo', cx:x+w/2, cy:y+h/2, rx:w*0.75, ry:h*0.62, fill:'url(#coreGlow)'}, g);
+    el('rect', {'class':'s-core-box', x:x, y:y, width:w, height:h, rx:18}, g);
+    var cp = el('clipPath', {id:'logoClip'}, svg.querySelector('defs'));
+    el('rect', {x:x+w/2-20, y:y+22, width:40, height:40, rx:10}, cp);
+    var img = el('image', {x:x+w/2-22, y:y+20, width:44, height:44, 'clip-path':'url(#logoClip)'}, g);
+    img.setAttributeNS('http://www.w3.org/1999/xlink', 'href', document.querySelector('.brand img').src);
+    img.setAttribute('href', document.querySelector('.brand img').src);
+    el('text', {'class':'s-core-k', x:x+w/2, y:y+86, 'text-anchor':'middle'}, g, 'ORCHESTRATED PIPELINE');
+    el('text', {'class':'s-core-title', x:x+w/2, y:y+114, 'text-anchor':'middle'}, g, 'Rabbit Hole');
+    stageEls = [];
+    var cols = compact ? 3 : 2, sw = compact ? (w-48-16)/3 : (w-48-10)/2, sh = 30, gap = compact ? 8 : 10;
+    for (var i = 0; i < STAGES.length; i++){
+      var cx = x + 24 + (i % cols) * (sw + gap), cy = y + 136 + Math.floor(i / cols) * (sh + 10);
+      var sg = el('g', {'class':'s-stage'}, g);
+      el('rect', {x:cx, y:cy, width:sw, height:sh, rx:8}, sg);
+      el('text', {x:cx+sw/2, y:cy+sh/2+4, 'text-anchor':'middle'}, sg, compact ? STAGES[i] : String(i+1).padStart(2,'0') + ' ' + STAGES[i]);
+      stageEls.push(sg);
+    }
+    el('text', {'class':'s-foot', x:x+w/2, y:y+h-38, 'text-anchor':'middle'}, g, '300+ tools · 80+ models');
+    el('text', {'class':'s-foot', x:x+w/2, y:y+h-20, 'text-anchor':'middle'}, g, 'run to your production doctrine');
+  }
+  function drawWide(svg){
+    svg.setAttribute('viewBox', '0 0 1200 620');
+    var g = el('g', {}, svg);
+    el('text', {'class':'s-col', x:30, y:34}, g, 'Your side · local');
+    el('text', {'class':'s-col', x:1170, y:34, 'text-anchor':'end'}, g, 'AI models · cloud');
+    var cx = 470, cy = 112, cw = 260, ch = 360;
+    var wires = el('g', {}, g);
+    var lw = 290, lh = 76;
+    LEFT.forEach(function(n, i){
+      var y = 70 + i * 132, my = y + lh/2, ty = cy + 150 + i * 44;
+      wire(wires, 'M'+(30+lw)+' '+my+' C '+(400)+' '+my+', '+(410)+' '+ty+', '+cx+' '+ty, false);
+      node(g, 30, y, lw, lh, n);
+    });
+    var rw = 290, rh = 70;
+    RIGHT.forEach(function(n, i){
+      var y = 56 + i * 92, my = y + rh/2, ty = cy + 128 + i * 36;
+      wire(wires, 'M'+(cx+cw)+' '+ty+' C '+(800)+' '+ty+', '+(810)+' '+my+', '+(880)+' '+my, i % 2 === 1);
+      node(g, 880, y, rw, rh, n);
+    });
+    core(g, cx, cy, cw, ch, false);
+  }
+  function drawTall(svg){
+    var SHORT_L = [['Local footage','Gameplay, renders'],['Brand kits','Logos, style plates'],['Builds','Game builds, HTML5'],['Your tools','Blender, After Effects']];
+    var SHORT_R = [['Language','Claude, Gemini, GPT'],['Image','Nano Banana, FLUX'],['Video','Seedance, Veo, Kling'],['Voice & sound','ElevenLabs'],['3D','Tripo, Hunyuan3D'],['Upscale & finish','Topaz, cut-outs']];
+    var nw = 164, nh = 64, cx = 20, cw = 320, ch = 272, colX = [10 + nw/2, 10 + nw + 12 + nw/2];
+    var cy = 40 + 2 * nh + 64 + 56, my0 = cy + ch + 62;
+    var H = my0 + 3 * nh + 2 * 14 + 12;
+    svg.setAttribute('viewBox', '0 0 360 ' + H);
+    var g = el('g', {}, svg);
+    var wires = el('g', {}, g);
+    el('text', {'class':'s-col', x:180, y:22, 'text-anchor':'middle'}, g, 'Your side \u00b7 local');
+    colX.forEach(function(x, c){ wire(wires, 'M'+x+' '+(40+nh/2)+' L '+x+' '+cy, c === 1); });
+    LEFT.forEach(function(n, i){
+      node(g, 10 + (i % 2) * (nw + 12), 40 + Math.floor(i / 2) * (nh + 64), nw, nh, {t:SHORT_L[i][0], d:SHORT_L[i][1]});
+    });
+    el('text', {'class':'s-col', x:180, y:cy+ch+36, 'text-anchor':'middle'}, g, 'AI models \u00b7 cloud');
+    colX.forEach(function(x, c){ wire(wires, 'M'+x+' '+(cy+ch)+' L '+x+' '+(my0 + 2*(nh+14) + nh/2), c === 0); });
+    RIGHT.forEach(function(n, i){
+      node(g, 10 + (i % 2) * (nw + 12), my0 + Math.floor(i / 2) * (nh + 14), nw, nh, {t:SHORT_R[i][0], d:SHORT_R[i][1]});
+    });
+    core(g, cx, cy, cw, ch, true);
+  }
+  svg = document.getElementById('schematic'); var mode = '';
+  function render(){
+    var m = window.innerWidth < 760 ? 'tall' : 'wide';
+    if (m === mode) return;
+    mode = m;
+    while (svg.lastChild && svg.lastChild.nodeName !== 'desc') svg.removeChild(svg.lastChild);
+    defs(svg);
+    (m === 'tall' ? drawTall : drawWide)(svg);
+  }
+  render();
+  window.addEventListener('resize', render);
+
+  /* stage highlight: the signal moving through the pipeline */
+  if (!reduce){
+    var k = 0;
+    setInterval(function(){
+      stageEls.forEach(function(s, i){ s.classList.toggle('on', i === k); });
+      k = (k + 1) % STAGES.length;
+    }, 1100);
+  }
+
+  /* ---------- load + reveal + count-up ---------- */
+  requestAnimationFrame(function(){ document.getElementById('hero').classList.add('ready'); });
+
+  function countUp(span){
+    var to = +span.dataset.to, suf = span.dataset.suffix || '';
+    if (reduce){ span.textContent = to + suf; return; }
+    var t0 = null, dur = 1400;
+    function tick(t){
+      if (!t0) t0 = t;
+      var p = Math.min(1, (t - t0) / dur), e = 1 - Math.pow(1 - p, 3);
+      span.textContent = Math.round(to * e) + suf;
+      if (p < 1) requestAnimationFrame(tick);
+    }
+    span.textContent = '0' + suf;
+    requestAnimationFrame(tick);
+  }
+  var items = document.querySelectorAll('.reveal');
+  if (!('IntersectionObserver' in window) || reduce){
+    items.forEach(function(i){ i.classList.add('in'); });
+    document.querySelectorAll('.num .v').forEach(function(s){ s.textContent = s.dataset.to + (s.dataset.suffix || ''); });
+    return;
+  }
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(en){
+      if (!en.isIntersecting) return;
+      en.target.classList.add('in');
+      var v = en.target.querySelector('.v[data-to]');
+      if (v) countUp(v);
+      io.unobserve(en.target);
+    });
+  }, {threshold:.15, rootMargin:'0px 0px -6% 0px'});
+  items.forEach(function(i){ io.observe(i); });
+})();
+</script>
 </body>
 </html>
