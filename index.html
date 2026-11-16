@@ -215,6 +215,63 @@ footer a:hover{color:var(--ink)}
   .hm-plane{transform:rotateX(52deg) rotateZ(-18deg)}
 }
 @media (prefers-reduced-motion:reduce){.hm-track{animation:none!important}}
+
+/* ---------- premium pass below the hero (2026-11-16): grounds, glass, glow, motion ---------- */
+main > section{position:relative;isolation:isolate;border-top:0;padding:clamp(84px,11vw,140px) 0}
+main > section::before{content:"";position:absolute;left:0;right:0;top:0;height:1px;background:linear-gradient(90deg,transparent,rgba(124,92,255,.38) 30%,rgba(63,127,214,.32) 70%,transparent);z-index:0}
+main > section::after{content:"";position:absolute;inset:-120px 0 0;z-index:-1;pointer-events:none;
+  background:radial-gradient(700px 380px at 12% 0%,rgba(63,127,214,.10),transparent 70%),radial-gradient(820px 460px at 88% 18%,rgba(111,87,214,.13),transparent 70%)}
+#makes::after{background:radial-gradient(760px 420px at 85% 10%,rgba(111,87,214,.14),transparent 70%),radial-gradient(600px 360px at 8% 70%,rgba(63,127,214,.09),transparent 70%)}
+#showcase::after{background:radial-gradient(900px 520px at 50% 0%,rgba(111,87,214,.16),transparent 70%),radial-gradient(700px 420px at 0% 80%,rgba(63,127,214,.08),transparent 70%)}
+#bridge::after{background:radial-gradient(1000px 560px at 50% 55%,rgba(124,92,255,.14),transparent 70%)}
+#loop::after{background:radial-gradient(760px 420px at 15% 20%,rgba(63,127,214,.10),transparent 70%),radial-gradient(760px 420px at 85% 85%,rgba(111,87,214,.12),transparent 70%)}
+#proof::after{background:radial-gradient(900px 480px at 50% 30%,rgba(111,87,214,.13),transparent 70%)}
+#bridge{background:transparent}
+.sec-head{gap:18px;margin-bottom:clamp(40px,6vw,64px)}
+.sec-head .eyebrow{display:inline-flex;align-items:center;gap:10px}
+.sec-head .eyebrow::before{content:"";width:22px;height:1px;background:linear-gradient(90deg,var(--violet),transparent)}
+h2{letter-spacing:-.025em;font-size:clamp(30px,4vw,48px)}
+/* glass */
+.make,.card,.multi,.nums,.sc-tile,.sc-block,.schem,.sc-tabs{
+  background:linear-gradient(180deg,rgba(255,255,255,.045),rgba(255,255,255,.012)) ,rgba(14,14,20,.62);
+  border:1px solid rgba(255,255,255,.08);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.06),0 24px 60px -30px rgba(0,0,0,.85);
+  -webkit-backdrop-filter:blur(14px) saturate(120%);backdrop-filter:blur(14px) saturate(120%)}
+.make,.card,.sc-tile,.num{transition:transform .35s cubic-bezier(.2,.7,.2,1),box-shadow .35s ease,border-color .35s ease}
+.make:hover,.card:hover,.sc-tile:hover{transform:translateY(-4px);border-color:rgba(124,92,255,.38);box-shadow:inset 0 1px 0 rgba(255,255,255,.08),0 30px 70px -30px rgba(0,0,0,.9),0 0 46px -12px rgba(124,92,255,.45)}
+.num:hover{box-shadow:inset 0 0 60px -20px rgba(124,92,255,.35)}
+.multi div,.num{border-color:rgba(255,255,255,.07)!important}
+.nums{border-radius:20px}
+/* "what it makes" media */
+.make{padding:0 0 20px;overflow:hidden;gap:10px}
+.make .mk-media{position:relative;aspect-ratio:16/10;margin:0 0 6px;overflow:hidden;background:var(--bg-2)}
+.make .mk-media img,.make .mk-media video{display:block;width:100%;height:100%;object-fit:cover;transform:scale(1.02);transition:transform .8s cubic-bezier(.2,.7,.2,1)}
+.make:hover .mk-media img,.make:hover .mk-media video{transform:scale(1.08)}
+.make .mk-media::after{content:"";position:absolute;inset:auto 0 0;height:55%;background:linear-gradient(180deg,transparent,rgba(14,14,20,.92))}
+.make svg,.make h3,.make p{margin-left:20px;margin-right:20px}
+.make svg{margin-top:-30px;position:relative;z-index:1;background:rgba(14,14,20,.85);border:1px solid rgba(124,92,255,.35);border-radius:10px;padding:6px;width:36px;height:36px;box-shadow:0 0 22px -6px rgba(124,92,255,.6)}
+/* steps */
+.step h3{font-size:18px}
+.step::after{background:linear-gradient(90deg,rgba(124,92,255,.55),rgba(63,127,214,.3) 70%,transparent)}
+/* showcase tabs: sliding pill */
+.sc-tabs{position:sticky}
+.sc-tab{position:relative;z-index:1;transition:color .3s ease}
+.sc-tab[aria-selected="true"]{background:transparent;color:#fff}
+.sc-pill{position:absolute;top:4px;bottom:4px;left:4px;width:0;border-radius:999px;background:linear-gradient(100deg,#6f57d6,#7c5cff 50%,#3f7fd6);box-shadow:0 8px 26px -8px rgba(124,92,255,.75);transition:transform .45s cubic-bezier(.2,.8,.2,1),width .45s cubic-bezier(.2,.8,.2,1);z-index:0}
+/* schematic glow */
+.schem{border-radius:22px}
+.schem .wire{stroke:rgba(124,92,255,.22);stroke-width:1.6}
+.schem .flow{stroke-width:2.4;filter:drop-shadow(0 0 4px rgba(124,92,255,.95)) drop-shadow(0 0 10px rgba(63,127,214,.6));stroke-dasharray:4 26}
+.s-node rect{fill:rgba(20,20,30,.92);stroke:rgba(255,255,255,.1)}
+.s-node .dot{filter:drop-shadow(0 0 5px rgba(124,92,255,.9))}
+.s-stage.on rect{filter:drop-shadow(0 0 8px rgba(124,92,255,.8))}
+/* close: a cinematic still behind the call to action */
+.close{overflow:hidden}
+.close .cl-bg{position:absolute;inset:0;z-index:-1;pointer-events:none;opacity:.32;background:center/cover no-repeat;-webkit-mask-image:radial-gradient(ellipse 60% 70% at 50% 50%,#000 20%,transparent 75%);mask-image:radial-gradient(ellipse 60% 70% at 50% 50%,#000 20%,transparent 75%)}
+footer{position:relative;border-top:0}
+footer::before{content:"";position:absolute;left:0;right:0;top:0;height:1px;background:linear-gradient(90deg,transparent,rgba(124,92,255,.3),transparent)}
+@media (max-width:640px){main > section{padding:72px 0}.make svg{margin-top:-26px}}
+@media (prefers-reduced-motion:reduce){.make,.card,.sc-tile,.num,.make .mk-media img,.make .mk-media video,.sc-pill{transition:none!important}.make:hover,.card:hover,.sc-tile:hover{transform:none}.schem .flow{animation:none}}
 </style>
 </head>
 <body>
@@ -260,22 +317,27 @@ footer a:hover{color:var(--ink)}
       </div>
       <div class="makes">
         <article class="make reveal" style="--i:0">
+          <div class="mk-media" aria-hidden="true"><video muted loop playsinline preload="none" poster="media/ad-08.jpg" data-src="media/ad-08.mp4"></video></div>
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 20 7.5v9L12 21l-8-4.5v-9z"/><path d="M12 12 20 7.5M12 12 4 7.5M12 12v9"/></svg>
           <h3>3D video</h3><p>Sets, characters and shots built in 3D, then rendered to film.</p>
         </article>
         <article class="make reveal" style="--i:1">
+          <div class="mk-media" aria-hidden="true"><video muted loop playsinline preload="none" poster="media/eng-jungle.jpg" data-src="media/eng-jungle.mp4"></video></div>
           <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m10 9 5 3-5 3z"/></svg>
           <h3>2D &amp; motion</h3><p>Generated footage, gameplay and animated titles, edited and mixed.</p>
         </article>
         <article class="make reveal" style="--i:2">
+          <div class="mk-media" aria-hidden="true"><img src="media/ad-07.jpg" alt="" loading="lazy" decoding="async"></div>
           <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="7" y="2.5" width="10" height="19" rx="2.5"/><circle cx="12" cy="10" r="2.4"/><path d="M8.8 16.2c.8-1.6 1.9-2.4 3.2-2.4s2.4.8 3.2 2.4"/></svg>
           <h3>UGC video</h3><p>Creator-style talking-head ads with a consistent cast.</p>
         </article>
         <article class="make reveal" style="--i:3">
+          <div class="mk-media" aria-hidden="true"><img src="media/ad-static-1.jpg" alt="" loading="lazy" decoding="async"></div>
           <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="1.8"/><path d="m21 15-5-5L5 21"/></svg>
           <h3>Statics</h3><p>Banners and store images from the same brief and brand kit.</p>
         </article>
         <article class="make reveal" style="--i:4">
+          <div class="mk-media" aria-hidden="true"><img src="media/eng-mobile.jpg" alt="" loading="lazy" decoding="async"></div>
           <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="6.5" width="19" height="11" rx="5.5"/><path d="M7.5 10.2v3.6M5.7 12h3.6"/><circle cx="15.5" cy="11" r=".9"/><circle cx="17.6" cy="13.2" r=".9"/></svg>
           <h3>Playable ads</h3><p>Interactive ads re-dressed and exported per ad network.</p>
         </article>
@@ -293,7 +355,7 @@ footer a:hover{color:var(--ink)}
   <!-- 2b · Showcase: real work in two tabs (added 2026-11-16) -->
   <section id="showcase" aria-label="Showcase">
     <div class="wrap">
-      <div class="sc-tabs" role="tablist" aria-label="Showcase">
+      <div class="sc-tabs" role="tablist" aria-label="Showcase"><span class="sc-pill" aria-hidden="true"></span>
         <button class="sc-tab" role="tab" id="tab-marketing" aria-controls="marketing" aria-selected="true" tabindex="0" data-tab="marketing"></button>
         <button class="sc-tab" role="tab" id="tab-engine" aria-controls="engine" aria-selected="false" tabindex="-1" data-tab="engine"></button>
       </div>
@@ -433,6 +495,7 @@ footer a:hover{color:var(--ink)}
 
   <!-- 6 · Close -->
   <section class="close" aria-labelledby="close-h">
+    <div class="cl-bg" aria-hidden="true" data-bg="media/h-goth.jpg"></div>
     <div class="wrap">
       <p class="eyebrow reveal">Rabbit Hole — Creative Automation</p>
       <h2 id="close-h" class="reveal" style="--i:1">Remove the production bottleneck.</h2>
@@ -705,6 +768,33 @@ footer a:hover{color:var(--ink)}
     vids.forEach(function(v){ if (io) io.observe(v); else { v.src = v.dataset.src; v.play(); } });
   }
   if (document.readyState === 'complete') setTimeout(start, 300); else window.addEventListener('load', function(){ setTimeout(start, 300); });
+})();
+</script>
+
+<script>
+/* Premium pass (2026-11-16): sliding tab pill, card media in view, lazy close background. */
+(function(){
+  var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var pill = document.querySelector('.sc-pill');
+  function place(){
+    var on = document.querySelector('.sc-tab[aria-selected="true"]'); if (!pill || !on) return;
+    pill.style.width = on.offsetWidth + 'px'; pill.style.transform = 'translateX(' + (on.offsetLeft - 4) + 'px)';
+  }
+  if (pill){
+    new MutationObserver(place).observe(document.querySelector('.sc-tabs'), {attributes:true, subtree:true, attributeFilter:['aria-selected']});
+    window.addEventListener('resize', place); if (document.fonts && document.fonts.ready) document.fonts.ready.then(place); place();
+  }
+  var io = ('IntersectionObserver' in window) ? new IntersectionObserver(function(es){
+    es.forEach(function(e){ var v = e.target;
+      if (e.isIntersecting){ if (!v.src) v.src = v.dataset.src; var p = v.play(); if (p && p.catch) p.catch(function(){}); }
+      else if (!v.paused) v.pause(); });
+  }, {threshold:.3}) : null;
+  if (!reduce && io) document.querySelectorAll('.mk-media video[data-src]').forEach(function(v){ io.observe(v); });
+  var bg = document.querySelector('.cl-bg');
+  if (bg && 'IntersectionObserver' in window){
+    var o2 = new IntersectionObserver(function(es){ es.forEach(function(e){ if (e.isIntersecting){ bg.style.backgroundImage = 'url(' + bg.dataset.bg + ')'; o2.disconnect(); } }); }, {rootMargin:'300px'});
+    o2.observe(bg);
+  } else if (bg) bg.style.backgroundImage = 'url(' + bg.dataset.bg + ')';
 })();
 </script>
 </body>
