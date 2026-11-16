@@ -168,6 +168,31 @@ footer a:hover{color:var(--ink)}
   .js .rise,.js .reveal{opacity:1!important;transform:none!important;transition:none!important}
   .btn,.make{transition:none}
 }
+
+/* ---------- showcase: two tabs of real work (added 2026-11-16) ---------- */
+.sc-tabs{position:sticky;top:72px;z-index:5;display:inline-flex;gap:4px;padding:4px;border:1px solid var(--line-2);border-radius:999px;background:rgba(14,14,19,.86);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);margin-bottom:28px}
+.sc-tab{font:600 14px/1 var(--body);color:var(--ink-2);background:transparent;border:0;border-radius:999px;padding:11px 18px;cursor:pointer;min-height:40px}
+.sc-tab[aria-selected="true"]{background:var(--violet);color:#fff}
+.sc-tab:focus-visible{outline:2px solid var(--violet);outline-offset:2px}
+.sc-panel[hidden]{display:none}
+.sc-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
+.sc-grid.wide{grid-template-columns:repeat(3,1fr)}
+.sc-tile{position:relative;margin:0;background:var(--panel);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.sc-tile img,.sc-tile video{display:block;width:100%;height:auto;object-fit:cover;aspect-ratio:1/1;background:var(--bg-2)}
+.sc-grid.wide .sc-tile img,.sc-grid.wide .sc-tile video{aspect-ratio:16/9}
+.sc-tile.contain img{object-fit:contain}
+.sc-tile figcaption,.sc-block figcaption{font:500 11.5px/1.4 var(--mono);letter-spacing:.06em;color:var(--ink-3);padding:10px 12px}
+.sc-block{margin:14px 0 0;background:var(--panel);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.sc-block img,.sc-block video{display:block;width:100%;height:auto;background:var(--bg-2)}
+.sc-block.narrow{max-width:860px}
+.sc-row{display:grid;grid-template-columns:1.25fr 1fr;gap:14px;margin-top:14px}
+.sc-row .sc-block{margin:0}
+.sc-label{font:500 11px/1 var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--violet);margin:34px 0 12px}
+.sc-sound{position:absolute;right:10px;bottom:44px;font:600 12px/1 var(--body);color:#fff;background:rgba(8,8,10,.72);border:1px solid var(--line-2);border-radius:999px;padding:9px 13px;cursor:pointer}
+.sc-hub svg{display:block;width:100%;height:auto}
+.sc-hub text{font-family:var(--body)}
+@media (max-width:1000px){.sc-grid{grid-template-columns:repeat(3,1fr)}.sc-row{grid-template-columns:1fr}}
+@media (max-width:640px){.sc-grid,.sc-grid.wide{grid-template-columns:1fr 1fr}.sc-tabs{top:64px;display:flex;width:100%}.sc-tab{flex:1;padding:11px 8px;font-size:13px}}
 </style>
 </head>
 <body>
@@ -238,6 +263,79 @@ footer a:hover{color:var(--ink)}
         <div><dt>Every ratio</dt><dd>9:16, 4:5, 1:1 and 16:9 from one master edit.</dd></div>
         <div><dt>Every network</dt><dd>Lengths, sizes and specs per network, named and delivered.</dd></div>
       </dl>
+    </div>
+  </section>
+
+
+  <!-- 2b · Showcase: real work in two tabs (added 2026-11-16) -->
+  <section id="showcase" aria-label="Showcase">
+    <div class="wrap">
+      <div class="sc-tabs" role="tablist" aria-label="Showcase">
+        <button class="sc-tab" role="tab" id="tab-marketing" aria-controls="marketing" aria-selected="true" tabindex="0" data-tab="marketing"></button>
+        <button class="sc-tab" role="tab" id="tab-engine" aria-controls="engine" aria-selected="false" tabindex="-1" data-tab="engine"></button>
+      </div>
+
+      <div class="sc-panel" role="tabpanel" id="marketing" aria-labelledby="tab-marketing" tabindex="0">
+        <div class="sc-grid"><figure class="sc-tile"><video muted loop playsinline preload="none" poster="" data-poster="media/ad-01.jpg" data-src="media/ad-01.mp4" aria-label="3D cinematic"></video><figcaption>3D cinematic</figcaption></figure><figure class="sc-tile"><video muted loop playsinline preload="none" poster="" data-poster="media/ad-02.jpg" data-src="media/ad-02.mp4" aria-label="3D cinematic"></video><figcaption>3D cinematic</figcaption></figure><figure class="sc-tile"><video muted loop playsinline preload="none" poster="" data-poster="media/ad-03.jpg" data-src="media/ad-03.mp4" aria-label="3D cinematic"></video><figcaption>3D cinematic</figcaption></figure><figure class="sc-tile"><video muted loop playsinline preload="none" poster="" data-poster="media/ad-04.jpg" data-src="media/ad-04.mp4" aria-label="3D cinematic"></video><figcaption>3D cinematic</figcaption></figure><figure class="sc-tile"><video muted loop playsinline preload="none" poster="" data-poster="media/ad-05.jpg" data-src="media/ad-05.mp4" aria-label="3D cinematic"></video><figcaption>3D cinematic</figcaption></figure><figure class="sc-tile"><video muted loop playsinline preload="none" poster="" data-poster="media/ad-06.jpg" data-src="media/ad-06.mp4" aria-label="3D cinematic"></video><figcaption>3D cinematic</figcaption></figure><figure class="sc-tile"><video muted loop playsinline preload="none" poster="" data-poster="media/ad-07.jpg" data-src="media/ad-07.mp4" aria-label="UGC with gameplay"></video><figcaption>UGC with gameplay</figcaption></figure><figure class="sc-tile"><video muted loop playsinline preload="none" poster="" data-poster="media/ad-08.jpg" data-src="media/ad-08.mp4" aria-label="3D cinematic"></video><figcaption>3D cinematic</figcaption></figure><figure class="sc-tile"><video muted loop playsinline preload="none" poster="" data-poster="media/ad-09.jpg" data-src="media/ad-09.mp4" aria-label="Seasonal"></video><figcaption>Seasonal</figcaption></figure><figure class="sc-tile"><video muted loop playsinline preload="none" poster="" data-poster="media/ad-10.jpg" data-src="media/ad-10.mp4" aria-label="3D cinematic"></video><figcaption>3D cinematic</figcaption></figure></div>
+        <div class="sc-grid" style="margin-top:10px;grid-template-columns:repeat(2,1fr);max-width:calc(40% - 4px)"><figure class="sc-tile"><img alt="Static" data-src="media/ad-static-1.jpg" decoding="async"><figcaption>Static</figcaption></figure><figure class="sc-tile"><img alt="Static" data-src="media/ad-static-2.jpg" decoding="async"><figcaption>Static</figcaption></figure></div>
+        <p class="sc-label">Iteration · culturalisation · every ratio</p>
+        <figure class="sc-block narrow"><video muted loop playsinline preload="none" data-poster="media/compare.jpg" data-src="media/compare.mp4" aria-label="Side by side: original and culturalised, original and iteration, 1:1 and 9:16"></video><figcaption>Original beside its culturalised, iterated and re-framed versions</figcaption></figure>
+        <p class="sc-label">From a designer's PSD</p>
+        <figure class="sc-block"><img alt="A layered PSD becomes every ratio, each with its own layered PSD" data-src="media/psd-ratios.jpg" decoding="async"><figcaption>One layered PSD in, every ratio out, each with its layers</figcaption></figure>
+        <p class="sc-label">Ticket to finals</p>
+        <figure class="sc-block"><img alt="Ticket, brief, storyboard, shots, cut, motion and finals in every ratio" data-src="media/production-strip.jpg" decoding="async"><figcaption>Ticket → brief → storyboard → shots → cut → motion → finals</figcaption></figure>
+      </div>
+
+      <div class="sc-panel" role="tabpanel" id="engine" aria-labelledby="tab-engine" tabindex="0" hidden>
+        <figure class="sc-block sc-hub"><svg viewBox="0 0 1100 470" role="img" aria-labelledby="hub-t"><title id="hub-t">An LLM orchestrates Rabbit Hole, which drives audio, images, image to 3D, Blender, Unreal, motion and video</title>
+<defs><linearGradient id="hubg" x1="0" x2="1"><stop offset="0" stop-color="#7c5cff"/><stop offset="1" stop-color="#3f7fd6"/></linearGradient></defs>
+<g stroke="#2f2f3d" stroke-width="1.5" fill="none">
+<path d="M550 235 L150 70"/><path d="M550 235 L150 235"/><path d="M550 235 L150 400"/><path d="M550 235 L950 70"/><path d="M550 235 L950 235"/><path d="M550 235 L950 400"/><path d="M550 235 L550 430"/></g>
+<g font-size="15" fill="#f2f1f7" text-anchor="middle">
+<rect x="430" y="40" width="240" height="56" rx="28" fill="#121219" stroke="#7c5cff"/><text x="550" y="74">Claude, or any LLM</text>
+<path d="M550 96 L550 196" stroke="#7c5cff" stroke-width="2"/><text x="566" y="152" text-anchor="start" fill="#7d7a90" font-size="12">MCP</text>
+<rect x="440" y="196" width="220" height="78" rx="16" fill="url(#hubg)"/><text x="550" y="231" font-weight="700" font-size="18">Rabbit Hole</text><text x="550" y="254" font-size="12.5" fill="#e9e6ff">the driver</text>
+<rect x="40" y="44" width="220" height="52" rx="12" fill="#121219" stroke="#2f2f3d"/><text x="150" y="76">Audio · music, SFX, voice</text>
+<rect x="40" y="209" width="220" height="52" rx="12" fill="#121219" stroke="#2f2f3d"/><text x="150" y="241">Images · concept art</text>
+<rect x="40" y="374" width="220" height="52" rx="12" fill="#121219" stroke="#2f2f3d"/><text x="150" y="406">Image → 3D</text>
+<rect x="840" y="44" width="220" height="52" rx="12" fill="#121219" stroke="#2f2f3d"/><text x="950" y="76">Blender</text>
+<rect x="840" y="209" width="220" height="52" rx="12" fill="#121219" stroke="#2f2f3d"/><text x="950" y="241">Unreal Engine</text>
+<rect x="840" y="374" width="220" height="52" rx="12" fill="#121219" stroke="#2f2f3d"/><text x="950" y="406">Motion &amp; UI cards</text>
+<rect x="440" y="404" width="220" height="52" rx="12" fill="#121219" stroke="#2f2f3d"/><text x="550" y="436">Video</text>
+</g></svg><figcaption>Orchestrated from Claude, or any LLM, over MCP</figcaption></figure>
+        <p class="sc-label">From prompt to playable in Unreal</p>
+        <div class="sc-grid wide">
+          <figure class="sc-tile"><video muted loop playsinline preload="none" poster="" data-poster="media/eng-pie.jpg" data-src="media/eng-pie.mp4" aria-label="Playing in the Unreal editor"></video><figcaption>Playing in the Unreal editor</figcaption></figure>
+          <figure class="sc-tile"><video muted loop playsinline preload="none" poster="" data-poster="media/eng-jungle.jpg" data-src="media/eng-jungle.mp4" aria-label="In-game"></video><figcaption>In-game</figcaption></figure>
+          <figure class="sc-tile"><video muted loop playsinline preload="none" poster="" data-poster="media/eng-orrery.jpg" data-src="media/eng-orrery.mp4" aria-label="Arena capture"></video><figcaption>Arena capture</figcaption></figure>
+          <figure class="sc-tile"><img alt="Arena, lit like its concept" data-src="media/eng-arena-night.jpg" decoding="async"><figcaption>Arena, lit like its concept</figcaption></figure>
+          <figure class="sc-tile"><img alt="Arena in the engine" data-src="media/eng-arena-frozen.jpg" decoding="async"><figcaption>Arena in the engine</figcaption></figure>
+          <figure class="sc-tile"><img alt="Concept beside in-game" data-src="media/eng-orrery-concept-game.jpg" decoding="async"><figcaption>Concept beside in-game</figcaption></figure>
+        </div>
+        <p class="sc-label">Image → 3D → Blender</p>
+        <div class="sc-grid wide">
+          <figure class="sc-tile"><img alt="Concept → 3D model" data-src="media/eng-concept-to-model.jpg" decoding="async"><figcaption>Concept → 3D model</figcaption></figure>
+          <figure class="sc-tile"><img alt="Concept → clean → 3D" data-src="media/eng-image-to-3d.jpg" decoding="async"><figcaption>Concept → clean → 3D</figcaption></figure>
+          <figure class="sc-tile contain"><img alt="Cleaned and finished in Blender, automatically" data-src="media/eng-blender-finishes.jpg" decoding="async"><figcaption>Cleaned and finished in Blender, automatically</figcaption></figure>
+          <figure class="sc-tile contain"><img alt="Armour sets as 3D models" data-src="media/eng-armour-sets.jpg" decoding="async"><figcaption>Armour sets as 3D models</figcaption></figure>
+          <figure class="sc-tile"><img alt="Arena: concept beside the built set" data-src="media/eng-arena-blockout.jpg" decoding="async"><figcaption>Arena: concept beside the built set</figcaption></figure>
+          <figure class="sc-tile"><img alt="Weapons working in-game" data-src="media/eng-weapon-ingame.jpg" decoding="async"><figcaption>Weapons working in-game</figcaption></figure>
+        </div>
+        <p class="sc-label">Concepts · characters · in-game art</p>
+        <div class="sc-grid wide">
+          <figure class="sc-tile"><img alt="Arena concept" data-src="media/eng-concept-arena.jpg" decoding="async"><figcaption>Arena concept</figcaption></figure>
+          <figure class="sc-tile contain"><img alt="Creature concept" data-src="media/eng-concept-titan.jpg" decoding="async"><figcaption>Creature concept</figcaption></figure>
+          <figure class="sc-tile"><img alt="Character sheet" data-src="media/eng-character-sheet.jpg" decoding="async"><figcaption>Character sheet</figcaption></figure>
+          <figure class="sc-tile"><video muted loop playsinline preload="none" poster="" data-poster="media/eng-bullet.jpg" data-src="media/eng-bullet.mp4" aria-label="Cinematic capture"></video><figcaption>Cinematic capture</figcaption></figure>
+          <figure class="sc-tile"><video muted loop playsinline preload="none" poster="" data-poster="media/eng-mobile.jpg" data-src="media/eng-mobile.mp4" aria-label="On a phone, with its HUD"></video><figcaption>On a phone, with its HUD</figcaption></figure>
+          <figure class="sc-tile contain"><img alt="Menu and arena cards" data-src="media/eng-ui-cards.jpg" decoding="async"><figcaption>Menu and arena cards</figcaption></figure>
+        </div>
+        <p class="sc-label">Cinematics and voice</p>
+        <div class="sc-row">
+          <figure class="sc-block" style="position:relative"><video class="sc-voiced" muted playsinline preload="none" data-poster="media/eng-voice.jpg" data-src="media/eng-voice.mp4" aria-label="Narrated cinematic, with subtitles"></video><button class="sc-sound" type="button" aria-pressed="false">Sound on</button><figcaption>Narration, music and subtitles, generated and mixed</figcaption></figure>
+          <figure class="sc-block"><video muted loop playsinline preload="none" data-poster="media/eng-cine-loop.jpg" data-src="media/eng-cine-loop.mp4" aria-label="Cinematic"></video><figcaption>Cinematic, shot by shot</figcaption></figure>
+        </div>
+      </div>
     </div>
   </section>
 
@@ -501,6 +599,70 @@ footer a:hover{color:var(--ink)}
     });
   }, {threshold:.15, rootMargin:'0px 0px -6% 0px'});
   items.forEach(function(i){ io.observe(i); });
+})();
+</script>
+
+<script>
+/* Showcase tabs (2026-11-16). Rename the tabs here. */
+(function(){
+  var TABS = { marketing: 'Performance Marketing', engine: 'Asset Generation Engine' };
+  var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var tabs = [].slice.call(document.querySelectorAll('.sc-tab'));
+  if (!tabs.length) return;
+  tabs.forEach(function(b){ b.textContent = TABS[b.dataset.tab]; });
+  var io = ('IntersectionObserver' in window) ? new IntersectionObserver(function(es){
+    es.forEach(function(e){
+      var v = e.target;
+      if (e.isIntersecting){ if (!reduce && !v.classList.contains('sc-voiced')) { var p = v.play(); if (p && p.catch) p.catch(function(){}); } }
+      else if (!v.paused) v.pause();
+    });
+  }, {threshold:.25}) : null;
+  function load(panel){
+    panel.querySelectorAll('img[data-src]').forEach(function(i){ i.loading = 'lazy'; i.src = i.dataset.src; i.removeAttribute('data-src'); });
+    panel.querySelectorAll('video[data-src]').forEach(function(v){
+      v.poster = v.dataset.poster;
+      if (!reduce || v.classList.contains('sc-voiced')) { v.src = v.dataset.src; v.preload = 'metadata'; }
+      v.removeAttribute('data-src');
+      if (io) io.observe(v);
+    });
+  }
+  function show(id, focus){
+    tabs.forEach(function(b){
+      var on = b.dataset.tab === id;
+      b.setAttribute('aria-selected', on ? 'true' : 'false');
+      b.tabIndex = on ? 0 : -1;
+      var panel = document.getElementById(b.dataset.tab);
+      panel.hidden = !on;
+      if (on) { load(panel); if (focus) b.focus(); }
+      else panel.querySelectorAll('video').forEach(function(v){ v.pause(); });
+    });
+  }
+  tabs.forEach(function(b, i){
+    b.addEventListener('click', function(){ show(b.dataset.tab); history.replaceState(null, '', '#' + b.dataset.tab); });
+    b.addEventListener('keydown', function(e){
+      var k = e.key, n = null;
+      if (k === 'ArrowRight') n = tabs[(i + 1) % tabs.length];
+      else if (k === 'ArrowLeft') n = tabs[(i - 1 + tabs.length) % tabs.length];
+      else if (k === 'Home') n = tabs[0]; else if (k === 'End') n = tabs[tabs.length - 1];
+      if (n){ e.preventDefault(); show(n.dataset.tab, true); history.replaceState(null, '', '#' + n.dataset.tab); }
+    });
+  });
+  var want = (location.hash || '').slice(1);
+  show(TABS[want] ? want : 'marketing');
+  if (TABS[want]) setTimeout(function(){ document.getElementById('showcase').scrollIntoView({block:'start'}); }, 50);
+  window.addEventListener('hashchange', function(){ var h = location.hash.slice(1); if (TABS[h]) { show(h); document.getElementById('showcase').scrollIntoView({block:'start'}); } });
+  document.querySelectorAll('.sc-sound').forEach(function(btn){
+    var v = btn.parentNode.querySelector('video');
+    btn.addEventListener('click', function(){
+      if (!v.src) v.src = v.dataset.src || 'media/eng-voice.mp4';
+      var on = btn.getAttribute('aria-pressed') !== 'true';
+      btn.setAttribute('aria-pressed', on ? 'true' : 'false');
+      btn.textContent = on ? 'Sound off' : 'Sound on';
+      v.muted = !on;
+      if (on){ v.currentTime = 0; var p = v.play(); if (p && p.catch) p.catch(function(){}); } else v.pause();
+    });
+    v.addEventListener('ended', function(){ btn.setAttribute('aria-pressed','false'); btn.textContent = 'Sound on'; v.muted = true; });
+  });
 })();
 </script>
 </body>
