@@ -272,6 +272,8 @@ footer{position:relative;border-top:0}
 footer::before{content:"";position:absolute;left:0;right:0;top:0;height:1px;background:linear-gradient(90deg,transparent,rgba(124,92,255,.3),transparent)}
 @media (max-width:640px){main > section{padding:72px 0}.make svg{margin-top:-26px}}
 @media (prefers-reduced-motion:reduce){.make,.card,.sc-tile,.num,.make .mk-media img,.make .mk-media video,.sc-pill{transition:none!important}.make:hover,.card:hover,.sc-tile:hover{transform:none}.schem .flow{animation:none}}
+.make:not(:has(.mk-media)){padding-top:22px;background:linear-gradient(180deg,rgba(124,92,255,.10),rgba(255,255,255,.01) 55%),rgba(14,14,20,.62)}
+.make:not(:has(.mk-media)) svg{margin-top:0}
 </style>
 </head>
 <body>
