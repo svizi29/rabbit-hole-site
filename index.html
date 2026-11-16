@@ -193,6 +193,28 @@ footer a:hover{color:var(--ink)}
 .sc-hub text{font-family:var(--body)}
 @media (max-width:1000px){.sc-grid{grid-template-columns:repeat(3,1fr)}.sc-row{grid-template-columns:1fr}}
 @media (max-width:640px){.sc-grid,.sc-grid.wide{grid-template-columns:1fr 1fr}.sc-tabs{top:64px;display:flex;width:100%}.sc-tab{flex:1;padding:11px 8px;font-size:13px}}
+
+/* ---------- hero mosaic: a tilted wall of cinematic ads (added 2026-11-16) ---------- */
+.hero-mosaic{position:absolute;top:0;bottom:0;right:-9%;width:56%;pointer-events:none;overflow:hidden;
+  -webkit-mask-image:radial-gradient(ellipse 70% 72% at 58% 50%,#000 42%,transparent 78%);mask-image:radial-gradient(ellipse 70% 72% at 58% 50%,#000 42%,transparent 78%)}
+.hm-stage{position:absolute;left:50%;top:50%;width:900px;height:1300px;margin:-650px 0 0 -450px;perspective:1600px}
+.hm-plane{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;height:100%;transform:rotateX(48deg) rotateZ(-22deg) translateZ(-40px);transform-style:preserve-3d}
+.hm-col{overflow:visible}
+.hm-track{display:flex;flex-direction:column;gap:16px;animation:hm-up 70s linear infinite}
+.hm-col:nth-child(even) .hm-track{animation-name:hm-down;animation-duration:84s}
+@keyframes hm-up{from{transform:translateY(0)}to{transform:translateY(-50%)}}
+@keyframes hm-down{from{transform:translateY(-50%)}to{transform:translateY(0)}}
+.hm-t{position:relative;margin:0;border-radius:12px;overflow:hidden;border:1px solid rgba(255,255,255,.09);background:var(--panel);box-shadow:0 18px 50px -18px rgba(0,0,0,.8),0 0 0 1px rgba(124,92,255,.06),0 0 40px -18px rgba(124,92,255,.35)}
+.hm-t img,.hm-t video{display:block;width:100%;height:100%;object-fit:cover}
+.hm-t.r916{aspect-ratio:9/16}.hm-t.r11{aspect-ratio:1/1}.hm-t.r45{aspect-ratio:4/5}.hm-t.r169{aspect-ratio:16/9}
+.hm-t i{position:absolute;left:8px;bottom:8px;font:500 10px/1 var(--mono);font-style:normal;letter-spacing:.06em;color:#fff;background:rgba(8,8,10,.62);border:1px solid rgba(255,255,255,.14);border-radius:999px;padding:5px 8px}
+.hero .wrap{z-index:2}
+@media (max-width:1000px){
+  .hero-mosaic{position:relative;inset:auto;right:auto;width:auto;height:300px;margin:40px calc(var(--gutter) * -1) -20px;-webkit-mask-image:linear-gradient(180deg,transparent,#000 22%,#000 70%,transparent);mask-image:linear-gradient(180deg,transparent,#000 22%,#000 70%,transparent)}
+  .hm-stage{width:760px;height:1100px;margin:-550px 0 0 -380px}
+  .hm-plane{transform:rotateX(52deg) rotateZ(-18deg)}
+}
+@media (prefers-reduced-motion:reduce){.hm-track{animation:none!important}}
 </style>
 </head>
 <body>
@@ -226,6 +248,7 @@ footer a:hover{color:var(--ink)}
         <span><strong>20</strong> concepts overnight</span>
       </div>
     </div>
+  <div class="hero-mosaic" aria-hidden="true"><div class="hm-stage"><div class="hm-plane"><div class="hm-col"><div class="hm-track"><figure class="hm-t r916"><video muted loop playsinline preload="none" poster="media/ad-01.jpg" data-src="media/ad-01.mp4"></video></figure><figure class="hm-t r11"><img src="media/h-s03.jpg" alt="" decoding="async" loading="lazy"></figure><figure class="hm-t r45"><video muted loop playsinline preload="none" poster="media/h-jp.jpg" data-src="media/h-jp.mp4"></video><i>JP</i></figure><figure class="hm-t r11"><img src="media/h-s07.jpg" alt="" decoding="async" loading="lazy"></figure><figure class="hm-t r169"><video muted loop playsinline preload="none" poster="media/ad-04.jpg" data-src="media/ad-04.mp4"></video><i>Iteration v3</i></figure><figure class="hm-t r169"><img src="media/h-s14.jpg" alt="" decoding="async" loading="lazy"></figure><figure class="hm-t r916"><img src="media/ad-01.jpg" alt="" decoding="async" loading="lazy"></figure><figure class="hm-t r11"><img src="media/h-s03.jpg" alt="" decoding="async" loading="lazy"></figure><figure class="hm-t r45"><img src="media/h-jp.jpg" alt="" decoding="async" loading="lazy"><i>JP</i></figure><figure class="hm-t r11"><img src="media/h-s07.jpg" alt="" decoding="async" loading="lazy"></figure><figure class="hm-t r169"><img src="media/ad-04.jpg" alt="" decoding="async" loading="lazy"><i>Iteration v3</i></figure><figure class="hm-t r169"><img src="media/h-s14.jpg" alt="" decoding="async" loading="lazy"></figure></div></div><div class="hm-col"><div class="hm-track"><figure class="hm-t r169"><video muted loop playsinline preload="none" poster="media/h-goth.jpg" data-src="media/h-goth.mp4"></video></figure><figure class="hm-t r11"><img src="media/ad-08.jpg" alt="" decoding="async" loading="lazy"><i>1:1 · Meta</i></figure><figure class="hm-t r45"><img src="media/h-s04.jpg" alt="" decoding="async" loading="lazy"></figure><figure class="hm-t r916"><img src="media/ad-02.jpg" alt="" decoding="async" loading="lazy"></figure><figure class="hm-t r11"><img src="media/h-s08.jpg" alt="" decoding="async" loading="lazy"></figure><figure class="hm-t r169"><img src="media/h-s09.jpg" alt="" decoding="async" loading="lazy"></figure><figure class="hm-t r169"><img src="media/h-goth.jpg" alt="" decoding="async" loading="lazy"></figure><figure class="hm-t r11"><img src="media/ad-08.jpg" alt="" decoding="async" loading="lazy"><i>1:1 · Meta</i></figure><figure class="hm-t r45"><img src="media/h-s04.jpg" alt="" decoding="async" loading="lazy"></figure><figure class="hm-t r916"><img src="media/ad-02.jpg" alt="" decoding="async" loading="lazy"></figure><figure class="hm-t r11"><img src="media/h-s08.jpg" alt="" decoding="async" loading="lazy"></figure><figure class="hm-t r169"><img src="media/h-s09.jpg" alt="" decoding="async" loading="lazy"></figure></div></div><div class="hm-col"><div class="hm-track"><figure class="hm-t r45"><video muted loop playsinline preload="none" poster="media/ad-05.jpg" data-src="media/ad-05.mp4"></video></figure><figure class="hm-t r916"><img src="media/h-s06.jpg" alt="" decoding="async" loading="lazy"><i>9:16 · TikTok</i></figure><figure class="hm-t r11"><img src="media/ad-06.jpg" alt="" decoding="async" loading="lazy"></figure><figure class="hm-t r45"><video muted loop playsinline preload="none" poster="media/h-bear.jpg" data-src="media/h-bear.mp4"></video></figure><figure class="hm-t r11"><img src="media/h-s02.jpg" alt="" decoding="async" loading="lazy"></figure><figure class="hm-t r169"><img src="media/h-s13.jpg" alt="" decoding="async" loading="lazy"></figure><figure class="hm-t r45"><img src="media/ad-05.jpg" alt="" decoding="async" loading="lazy"></figure><figure class="hm-t r916"><img src="media/h-s06.jpg" alt="" decoding="async" loading="lazy"><i>9:16 · TikTok</i></figure><figure class="hm-t r11"><img src="media/ad-06.jpg" alt="" decoding="async" loading="lazy"></figure><figure class="hm-t r45"><img src="media/h-bear.jpg" alt="" decoding="async" loading="lazy"></figure><figure class="hm-t r11"><img src="media/h-s02.jpg" alt="" decoding="async" loading="lazy"></figure><figure class="hm-t r169"><img src="media/h-s13.jpg" alt="" decoding="async" loading="lazy"></figure></div></div><div class="hm-col"><div class="hm-track"><figure class="hm-t r916"><video muted loop playsinline preload="none" poster="media/ad-03.jpg" data-src="media/ad-03.mp4"></video></figure><figure class="hm-t r169"><video muted loop playsinline preload="none" poster="media/h-banner.jpg" data-src="media/h-banner.mp4"></video></figure><figure class="hm-t r11"><img src="media/h-s05.jpg" alt="" decoding="async" loading="lazy"></figure><figure class="hm-t r45"><img src="media/ad-10.jpg" alt="" decoding="async" loading="lazy"></figure><figure class="hm-t r11"><img src="media/h-s10.jpg" alt="" decoding="async" loading="lazy"><i>4:5 · Meta</i></figure><figure class="hm-t r11"><img src="media/h-s12.jpg" alt="" decoding="async" loading="lazy"></figure><figure class="hm-t r916"><img src="media/ad-03.jpg" alt="" decoding="async" loading="lazy"></figure><figure class="hm-t r169"><img src="media/h-banner.jpg" alt="" decoding="async" loading="lazy"></figure><figure class="hm-t r11"><img src="media/h-s05.jpg" alt="" decoding="async" loading="lazy"></figure><figure class="hm-t r45"><img src="media/ad-10.jpg" alt="" decoding="async" loading="lazy"></figure><figure class="hm-t r11"><img src="media/h-s10.jpg" alt="" decoding="async" loading="lazy"><i>4:5 · Meta</i></figure><figure class="hm-t r11"><img src="media/h-s12.jpg" alt="" decoding="async" loading="lazy"></figure></div></div></div></div></div>
   </div>
 
   <!-- 2 · What it makes -->
@@ -663,6 +686,25 @@ footer a:hover{color:var(--ink)}
     });
     v.addEventListener('ended', function(){ btn.setAttribute('aria-pressed','false'); btn.textContent = 'Sound on'; v.muted = true; });
   });
+})();
+</script>
+
+<script>
+/* Hero mosaic: posters first, a few videos play once the page has loaded and only while on screen (2026-11-16). */
+(function(){
+  var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (reduce) return;
+  var vids = [].slice.call(document.querySelectorAll('.hero-mosaic video[data-src]'));
+  if (!vids.length) return;
+  function start(){
+    var io = ('IntersectionObserver' in window) ? new IntersectionObserver(function(es){
+      es.forEach(function(e){ var v = e.target;
+        if (e.isIntersecting){ if (!v.src) v.src = v.dataset.src; var p = v.play(); if (p && p.catch) p.catch(function(){}); }
+        else if (!v.paused) v.pause(); });
+    }, {threshold:.1}) : null;
+    vids.forEach(function(v){ if (io) io.observe(v); else { v.src = v.dataset.src; v.play(); } });
+  }
+  if (document.readyState === 'complete') setTimeout(start, 300); else window.addEventListener('load', function(){ setTimeout(start, 300); });
 })();
 </script>
 </body>
