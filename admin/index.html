@@ -243,6 +243,25 @@ details summary { cursor: pointer; color: var(--rh-text-2); }
 .org-pick[hidden] { display: none; }
 .org-pick select { font: 500 13px/1.3 var(--rh-body); text-transform: none; letter-spacing: 0; padding: 6px 8px; }
 </style>
+<style>
+.dam { display: flex; flex-direction: column; gap: 22px; }
+.dam h3 { margin: 0 0 6px; font-size: 15px; }
+.dam .row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; padding: 12px 14px; border-top: 1px solid var(--rh-line); }
+.dam .row:first-child { border-top: 0; }
+.dam .row .name { flex: 1 1 260px; min-width: 0; }
+.dam .row .name span { display: block; color: var(--rh-text-3); font-size: 12px; overflow-wrap: anywhere; }
+.dam .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.dam .chip { font: 600 12px/1 var(--rh-body); padding: 6px 10px; border-radius: 999px; border: 1px solid var(--rh-line-2); background: none; color: var(--rh-text-3); cursor: pointer; }
+.dam .chip.on { background: var(--rh-accent-soft); color: var(--rh-accent-text); border-color: transparent; }
+.dam .add input { flex: 1 1 280px; }
+.dam .stats { overflow-x: auto; }
+.dam .stats table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+.dam .stats th, .dam .stats td { text-align: right; padding: 8px 12px; border-top: 1px solid var(--rh-line); white-space: nowrap; }
+.dam .stats th:first-child, .dam .stats td:first-child { text-align: left; }
+.dam .stats th { font: 500 11px/1.2 var(--rh-mono); text-transform: uppercase; letter-spacing: 0.06em; color: var(--rh-text-3); border-top: 0; }
+.dam .bad { color: var(--rh-bad); } .dam .good { color: var(--rh-good); }
+.dam .msg { color: var(--rh-text-2); }
+</style>
 </head>
 <body>
 <div class="gate" id="gate">
@@ -286,6 +305,7 @@ details summary { cursor: pointer; color: var(--rh-text-2); }
     <button role="tab" data-tab="games" aria-selected="false" hidden>Games</button>
     <button role="tab" data-tab="pipeline" aria-selected="false" hidden>Pipeline</button>
     <button role="tab" data-tab="feedback" aria-selected="false" hidden>Feedback</button>
+    <button role="tab" data-tab="dam" aria-selected="false" hidden>DAM</button>
     <button role="tab" data-tab="log" aria-selected="false">Log</button>
   </div>
   <section id="tab-people"></section>
@@ -297,6 +317,7 @@ details summary { cursor: pointer; color: var(--rh-text-2); }
   <section id="tab-games" hidden></section>
   <section id="tab-pipeline" hidden></section>
   <section id="tab-feedback" hidden></section>
+  <section id="tab-dam" hidden></section>
   <section id="tab-log" hidden></section>
 </main>
 
@@ -461,7 +482,7 @@ $('orgPick').onchange = function () {
   try { localStorage.setItem(ORG_KEY, sel.value) } catch (e) { /* private window */ }
   S.data = null; S.list = []; S.groups = []; S.dirty = false; S.usage = null; S.audit = null; S.edit = null
   sel.disabled = true
-  reload().catch(function (e) { alert(String(e && e.message || e)) }).then(function () { sel.disabled = false })
+  reload().then(function () { showTab('people') }).catch(function (e) { alert(String(e && e.message || e)) }).then(function () { sel.disabled = false })
 }
 $('gGoogle').onclick = function () {
   var btn = this; btn.disabled = true
@@ -512,6 +533,140 @@ $('signout').onclick = function () {
   S.dirty = false; writeS(null); $('gPass').value = ''; gate('Signed out.')
 }
 
+// ── DAM: the old DAM page's Library settings (folders to scan, catalogue, analysis) ──
+var DAM_API = 'https://script.google.com/macros/s/AKfycbxCmo_J0wFcptPLFVOsxiQWMXqYKqthO1UeHKat94sq3nra9rHAz8BDlpT3s-IWVESV6A/exec'
+var DAM_JOB = null
+function damCall(fn) {
+  var args = Array.prototype.slice.call(arguments, 1)
+  return idToken().then(function (tok) {
+    if (!tok) throw new Error('Sign in again.')
+    return fetch(DAM_API, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ action: 'admin_web', fn: fn, args: args, firebaseToken: tok }) })
+      .then(function (r) { return r.json().catch(function () { throw new Error('The DAM page stopped without an answer (HTTP ' + r.status + '). Google ends a run after 6 minutes; try again.') }) })
+      .then(function (j) { if (!j.ok) throw new Error(j.error || 'The DAM page said no.'); return j.result })
+  })
+}
+function damN(v) { return Number(v || 0).toLocaleString('en-US') }
+function damMsg(t, bad) { var m = $('damMsg'); if (m) { m.textContent = t || ''; m.className = 'msg' + (bad ? ' bad' : '') } }
+function damStats(a) {
+  var st = a.stats, an = a.status && a.status.analysis
+  if (!st) return '<p class="dim">No catalogue yet. Add a folder, then run the full scan.</p>'
+  var keys = Object.keys(st.byRoot || {}).sort(function (x, y) { return (x === '?') - (y === '?') || Number(x) - Number(y) })
+  var tot = [0, 0, 0, 0, 0, 0]
+  var rows = keys.map(function (k) {
+    var b = st.byRoot[k], x = (an && an.byRoot && an.byRoot[k]) || [0, 0, 0, 0, 0]
+    var gem = x[1] - x[2], miss = Math.max(0, b.analysable - x[1] - x[3])
+    ;[b.files, b.analysable, gem, x[2], miss, x[3]].forEach(function (v, i) { tot[i] += v })
+    return '<tr><td>' + esc(k === '?' ? 'Other' : (st.roots || [])[Number(k)] || 'Folder ' + k) + '</td><td>' + damN(b.files) + '</td><td>' + damN(b.analysable) + '</td><td>' + damN(gem) + '</td><td>' + damN(x[2]) + '</td><td class="' + (miss ? 'bad' : 'good') + '">' + damN(miss) + '</td><td>' + damN(x[3]) + '</td></tr>'
+  }).join('')
+  return '<div class="card stats"><table><thead><tr><th>Folder</th><th>Catalogued</th><th>Can be analysed</th><th>By Gemini</th><th>From Rabbit Hole</th><th>Missing</th><th>Failed</th></tr></thead><tbody>' + rows +
+    '<tr><td><b>All folders</b></td>' + tot.map(function (v, i) { return '<td' + (i === 4 ? ' class="' + (v ? 'bad' : 'good') + '"' : '') + '><b>' + damN(v) + '</b></td>' }).join('') + '</tr></tbody></table></div>'
+}
+function damAnalysis(an) {
+  if (!an) return 'Not started.'
+  var pct = an.total ? Math.round(an.done / an.total * 100) : 0
+  return damN(an.done) + ' of ' + damN(an.total) + ' analysed (' + pct + '%)' + (an.left ? ' · ' + damN(an.left) + ' to go' : ' · up to date') + (an.failed ? ' · ' + an.failed + ' could not be read' : '') + (an.error ? ' · last problem: ' + an.error : '')
+}
+function renderDam() {
+  var el = $('tab-dam')
+  if (!DAM_JOB) el.innerHTML = '<div class="empty">Asking the DAM page…</div>'
+  return damCall('getAdmin').then(function (a) {
+    var c = a.status && a.status.crawl
+    var vis = function (r) {
+      var all = !Array.isArray(r.vis)
+      return '<select data-visall="' + esc(r.id) + '" aria-label="Who sees ' + esc(r.name) + '"><option value="all"' + (all ? ' selected' : '') + '>Everyone</option><option value="groups"' + (all ? '' : ' selected') + '>Only some groups</option></select>' +
+        (all ? '' : '<span class="chips">' + (a.groups.length ? a.groups.map(function (g) { return '<button class="chip' + (r.vis.indexOf(g.id) >= 0 ? ' on' : '') + '" data-visg="' + esc(r.id) + '" data-g="' + esc(g.id) + '">' + esc(g.name) + '</button>' }).join('') : '<span class="dim">Make DAM groups on the People tab first.</span>') + '</span>')
+    }
+    el.innerHTML = '<div class="dam">' +
+      '<p class="intro">The Ten Square Games DAM: the Drive folders it scans, who sees each one, the catalogue and the AI analysis. It never changes Drive itself: renaming, moving and deleting happen in Drive. Who may open the DAM and the DAM groups are on the People tab.</p>' +
+      '<div><h3>Folders to scan</h3><div class="card">' +
+      (a.roots.length ? a.roots.map(function (r) {
+        return '<div class="row"><div class="name"><b>' + esc(r.name) + '</b><span>' + esc(r.path || '') + '</span></div>' + vis(r) +
+          '<select data-only="' + esc(r.id) + '" aria-label="Which files of ' + esc(r.name) + '"><option value=""' + (r.only === 'images' ? '' : ' selected') + '>All files</option><option value="images"' + (r.only === 'images' ? ' selected' : '') + '>Images only</option></select>' +
+          '<button class="btn" data-unroot="' + esc(r.id) + '">Remove</button></div>'
+      }).join('') : '<div class="row dim">No folders yet. Add at least one before the first scan.</div>') +
+      '<div class="row add"><input id="damRoot" placeholder="Paste a Drive folder link (drive.google.com/drive/folders/…)" aria-label="Drive folder link"><select id="damVis" aria-label="Who sees it"><option value="all">Everyone sees it</option>' + a.groups.map(function (g) { return '<option value="' + esc(g.id) + '">Only ' + esc(g.name) + '</option>' }).join('') + '</select>' +
+      '<select id="damOnly" aria-label="Which files"><option value="">All files</option><option value="images">Images only</option></select><button class="btn primary" id="damAdd">Add folder</button></div></div>' +
+      '<p class="dim">A new folder is scanned on its own and added to the catalogue. “Images only” skips PSD, After Effects and every other non-image file.</p></div>' +
+      '<div><h3>Catalogue</h3>' + damStats(a) +
+      '<div class="bar" style="margin-top:10px"><button class="btn primary" id="damQuick"' + (c && c.done ? '' : ' disabled') + '>Sync now</button><button class="btn" id="damScan"' + (a.roots.length ? '' : ' disabled') + '>' + (DAM_JOB === 'scan' ? 'Stop the scan' : 'Full scan now') + '</button>' +
+      '<span class="dim">' + (c ? (c.done ? 'Last full scan ' + esc(String(c.finishedAt || '').slice(0, 16).replace('T', ' ')) + '.' : 'Full scan in progress: ' + damN(c.files) + ' files so far, ' + c.queue + ' folders to go.') : 'No full scan yet.') + ' Rabbit Hole runs the full scan nightly and the sync every 10 minutes.</span></div></div>' +
+      '<div><h3>Visual analysis</h3><p class="dim">Gemini (' + esc(a.models.vision) + ') key ' + (a.keys.vision ? '<span class="good">set</span>' : '<span class="bad">missing</span>') + ' · today ' + damN(a.usedToday) + ' of ' + damN(a.dailyMax) + ' files · ' + esc(damAnalysis(a.status && a.status.analysis)) + '</p>' +
+      '<div class="bar"><button class="btn primary" id="damAnalyse"' + (a.keys.vision && c && c.done ? '' : ' disabled') + '>' + (DAM_JOB === 'analysis' ? 'Stop' : 'Analyse now') + '</button><span class="dim">Videos over 48 MB go to the Rabbit Hole set to “DAM jobs here”; Analyse now asks it to start at once.</span></div></div>' +
+      '<p id="damMsg" class="msg" role="status" aria-live="polite"></p></div>'
+    var again = function () { return renderDam() }
+    var fail = function (e) { damMsg(String(e && e.message || e), true) }
+    el.querySelectorAll('[data-visall]').forEach(function (sel) {
+      sel.onchange = function () { damCall('setFolderVisibility', sel.getAttribute('data-visall'), sel.value === 'all' ? 'all' : []).then(again, fail) }
+    })
+    el.querySelectorAll('[data-visg]').forEach(function (b) {
+      b.onclick = function () {
+        var r = a.roots.filter(function (x) { return x.id === b.getAttribute('data-visg') })[0], g = b.getAttribute('data-g')
+        var v = (r.vis || []).slice(), i = v.indexOf(g); if (i >= 0) v.splice(i, 1); else v.push(g)
+        damCall('setFolderVisibility', r.id, v).then(again, fail)
+      }
+    })
+    el.querySelectorAll('[data-only]').forEach(function (sel) {
+      sel.onchange = function () { sel.disabled = true; damMsg(sel.value ? 'Keeping images only…' : 'Rescanning this folder for all files…'); damCall('setFolderKinds', sel.getAttribute('data-only'), sel.value).then(function (r) { again(); if (r && r.rescan) damScan(true) }, fail) }
+    })
+    el.querySelectorAll('[data-unroot]').forEach(function (b) {
+      b.onclick = function () { if (!confirm('Stop scanning this folder? Its files leave the DAM; Drive is not touched.')) return; b.disabled = true; damCall('removeMasterFolder', b.getAttribute('data-unroot')).then(again, fail) }
+    })
+    $('damAdd').onclick = function () {
+      var link = $('damRoot').value.trim(), v = $('damVis').value
+      if (!link) { damMsg('Paste a Drive folder link first.', true); return }
+      this.disabled = true; damMsg('Checking the folder…')
+      damCall('addMasterFolder', link, v === 'all' ? 'all' : [v], $('damOnly').value).then(function () { again(); damScan(true) }, function (e) { $('damAdd').disabled = false; fail(e) })
+    }
+    $('damQuick').onclick = function () {
+      var b = this; b.disabled = true; damMsg('Syncing…')
+      damCall('quickSyncFromPage').then(function (q) { b.disabled = false; damMsg(q.skipped ? 'Not yet: ' + q.skipped + '.' : q.busy ? 'A scan step is running; try again in a minute.' : 'Synced: ' + q.added + ' added, ' + q.updated + ' changed, ' + q.removed + ' removed.') }, function (e) { b.disabled = false; fail(e) })
+    }
+    $('damScan').onclick = function () { damScan(false) }
+    $('damAnalyse').onclick = damAnalyse
+  }).catch(function (e) { el.innerHTML = '<div class="empty">' + esc(String(e && e.message || e)) + '</div>' })
+}
+function damSleep(ms) { return new Promise(function (ok) { setTimeout(ok, ms) }) }
+// The scan and the analysis run in steps from this tab, as on the DAM page; leave the tab open while they run.
+function damScan(resume) {
+  if (DAM_JOB === 'scan') { DAM_JOB = 'stop'; damMsg('Stopping after this step…'); return }
+  if (DAM_JOB) return
+  DAM_JOB = 'scan'; renderDam()
+  var restart = !resume
+  var step = function () {
+    if (DAM_JOB !== 'scan') { DAM_JOB = null; renderDam().then(function () { damMsg('Stopped. Full scan now carries on where it left off.') }); return }
+    damCall('crawlFromPage', restart).then(function (p) {
+      restart = false
+      if (p.done) { DAM_JOB = null; renderDam().then(function () { damMsg('Scan done: ' + damN(p.files) + ' files.') }); return }
+      damMsg(p.busy ? 'Another scan step is running…' : 'Scanning… ' + damN(p.files) + ' files so far, ' + p.queue + ' folders to go. Keep this tab open.')
+      ;(p.busy ? damSleep(20000) : Promise.resolve()).then(step)
+    }, function (e) { DAM_JOB = null; damMsg('Scan stopped: ' + (e.message || e), true) })
+  }
+  step()
+}
+function damAnalyse() {
+  if (DAM_JOB === 'analysis') { DAM_JOB = 'stop'; damMsg('Stopping after this step…'); return }
+  if (DAM_JOB) return
+  DAM_JOB = 'analysis'; renderDam()
+  damCall('requestHeavyPass').catch(function () { /* the site part still runs */ })
+  damCall('getAdmin').then(function (a) {
+    var shards = [], st = {}
+    for (var k = 0; k < (a.shards || 1); k++) shards.push(k)
+    var tell = function () {
+      var left = 0, done = 0; Object.keys(st).forEach(function (k) { left += st[k].left || 0; done += st[k].done || 0 })
+      damMsg('Analysing… ' + damN(done) + ' done, ' + damN(left) + ' left on the site. Keep this tab open.')
+    }
+    return Promise.all(shards.map(function (k) {
+      var n = 0
+      var go = function () {
+        if (DAM_JOB !== 'analysis' || n++ > 400) return
+        return damCall('analyseFromPage', k).then(function (p) { st[k] = p; tell(); if (p.finished) return; return (p.busy ? damSleep(30000) : Promise.resolve()).then(go) })
+      }
+      return go()
+    }))
+  }).then(function () { var stopped = DAM_JOB !== 'analysis'; DAM_JOB = null; renderDam().then(function () { damMsg(stopped ? 'Stopped. Analyse now carries on.' : 'The site’s part of the analysis is done.') }) },
+    function (e) { DAM_JOB = null; damMsg('Analysis stopped: ' + (e.message || e), true) })
+}
+
 var toastT
 function toast(msg, bad) { var t = $('toast'); t.textContent = msg; t.className = 'toast' + (bad ? ' bad' : ''); t.hidden = false; clearTimeout(toastT); toastT = setTimeout(function () { t.hidden = true }, bad ? 6000 : 2600) }
 function fail(e) { toast(String(e && e.message || e).replace(/^Exception: /, ''), true) }
@@ -534,7 +689,8 @@ document.querySelector('.tabs').addEventListener('click', function (ev) {
 })
 function showTab(t) {
   document.querySelectorAll('.tabs button').forEach(function (b) { b.setAttribute('aria-selected', b.dataset.tab === t ? 'true' : 'false') })
-  ;['people', 'types', 'usage', 'caps', 'keys', 'jira', 'games', 'pipeline', 'feedback', 'log'].forEach(function (x) { $('tab-' + x).hidden = x !== t })
+  ;['people', 'types', 'usage', 'caps', 'keys', 'jira', 'games', 'pipeline', 'feedback', 'dam', 'log'].forEach(function (x) { $('tab-' + x).hidden = x !== t })
+  if (t === 'dam') renderDam()
   if (t === 'types') renderTypes()
   if (t === 'games') renderGames()
   if (t === 'pipeline') renderPipelineHost()
@@ -978,6 +1134,7 @@ function apply(d) {
   // Games: TSG's (the organisation whose Studio projects can share with the TSG Elements library).
   var gt = document.querySelector('.tabs [data-tab="games"]'); if (gt) gt.hidden = d.orgId !== 'tsg'
   var pt = document.querySelector('.tabs [data-tab="pipeline"]'); if (pt) pt.hidden = d.orgId !== 'tsg'
+  var dt = document.querySelector('.tabs [data-tab="dam"]'); if (dt) dt.hidden = d.orgId !== 'tsg'
   var ft = document.querySelector('.tabs [data-tab="feedback"]'); if (ft) ft.hidden = !d.feedback
   var ct = document.querySelector('.tabs [data-tab="caps"]'); if (ct) ct.hidden = !d.caps
   S.capsDraft = null; renderCapBanner(); if (!$('tab-caps').hidden) renderCaps()
