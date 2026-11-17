@@ -239,6 +239,9 @@ details summary { cursor: pointer; color: var(--rh-text-2); }
 .gate-dl[hidden] { display: none; }
 .gate-dl p, .rh-dl .dl-msg { margin: 8px 0 0; color: var(--rh-text-3); }
 .rh-dl-os a[aria-disabled] { opacity: 0.5; pointer-events: none; }
+.org-pick { display: flex; align-items: center; gap: 8px; font: 500 11px/1 var(--rh-mono); text-transform: uppercase; letter-spacing: 0.06em; color: var(--rh-text-3); }
+.org-pick[hidden] { display: none; }
+.org-pick select { font: 500 13px/1.3 var(--rh-body); text-transform: none; letter-spacing: 0; padding: 6px 8px; }
 </style>
 </head>
 <body>
@@ -265,6 +268,7 @@ details summary { cursor: pointer; color: var(--rh-text-2); }
   <a class="rh-lockup" href="#" onclick="return false"><span class="rh-icon" aria-hidden="true"></span><span class="rh-word">Rabbit Hole <b>Admin</b></span></a>
   <span class="grow"></span>
   
+  <label class="org-pick" id="orgPickL" hidden>Organisation <select id="orgPick"></select></label>
   <span class="me" id="me"></span>
   <button class="btn sm" id="dlBtn" hidden>Download Rabbit Hole</button>
   <button class="btn sm" id="signout" hidden>Sign out</button>
@@ -306,7 +310,7 @@ function $(id) { return document.getElementById(id) }
 function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c] }) }
 // rabbit-hole.video: signed in with Firebase (the accounts Rabbit Hole uses); each call goes to the
 // admin's API deployment with the ID token, and the admin answers only its own admins.
-var CFG = {"org":"The North Watch","key":"AIzaSyAJsIaH85pXipJLJ1X6g1BFuOL1D_IfMmw","api":"https://script.google.com/macros/s/AKfycbwH0U-UlwF5Zj1XxxVl9NydH6e_Uk2PJ7jPna2RTr1oyvyUYY_GzKqwOUoB6M88kfIaXw/exec","google":"https://script.google.com/macros/s/AKfycbxMIN1VFDJ2ebsNCSUxLcIgGAO9HW-sUttKg3WepCqvflQzfcluoPDRPUTPyStw8yIFqg/exec","project":"rabbit-hole-c05b3","authDomain":"rabbit-hole-c05b3.firebaseapp.com"}
+var CFG = {"org":"The North Watch","key":"AIzaSyAJsIaH85pXipJLJ1X6g1BFuOL1D_IfMmw","api":"https://script.google.com/macros/s/AKfycbwH0U-UlwF5Zj1XxxVl9NydH6e_Uk2PJ7jPna2RTr1oyvyUYY_GzKqwOUoB6M88kfIaXw/exec","google":"https://script.google.com/macros/s/AKfycbxMIN1VFDJ2ebsNCSUxLcIgGAO9HW-sUttKg3WepCqvflQzfcluoPDRPUTPyStw8yIFqg/exec","orgs":[{"id":"tsg","name":"Ten Square Games","api":"https://script.google.com/macros/s/AKfycbx8wUzqjLzkSR-eTkT0dPjMzBYegKQMCzCRioWJHztWUzGKtFByVorArwh9cut3ODru/exec"},{"id":"tnw","name":"The North Watch","api":"https://script.google.com/macros/s/AKfycbwH0U-UlwF5Zj1XxxVl9NydH6e_Uk2PJ7jPna2RTr1oyvyUYY_GzKqwOUoB6M88kfIaXw/exec"}],"project":"rabbit-hole-c05b3","authDomain":"rabbit-hole-c05b3.firebaseapp.com"}
 var STORE = 'rh_admin_auth'
 var FB = 'https://identitytoolkit.googleapis.com/v1/accounts'
 function readS() { try { var s = JSON.parse(localStorage.getItem(STORE) || 'null'); return s && s.refreshToken ? s : null } catch (e) { return null } }
@@ -345,11 +349,17 @@ function idToken() {
     .then(function (j) { s.idToken = j.id_token; s.refreshToken = j.refresh_token || s.refreshToken; s.expiresAt = Date.now() + Number(j.expires_in || 3600) * 1000 - 60000; writeS(s); return s.idToken })
     .catch(function () { writeS(null); return null })
 }
+// The organisation whose admin is open: remembered per browser; Ten Square Games first.
+var ORG_KEY = 'rh_admin_org'
+function orgNow() {
+  var id = ''; try { id = localStorage.getItem(ORG_KEY) || '' } catch (e) { /* private window */ }
+  return CFG.orgs.filter(function (o) { return o.id === id })[0] || CFG.orgs[0]
+}
 function call(fn) {
   var args = Array.prototype.slice.call(arguments, 1)
   return idToken().then(function (tok) {
     if (!tok) { var e = new Error('Sign in again.'); gate(e.message, 'signin'); e.gated = true; throw e }
-    return fetch(CFG.api, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ action: 'admin', fn: fn, args: args, idToken: tok }) })
+    return fetch(orgNow().api, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ action: 'admin', fn: fn, args: args, idToken: tok }) })
       .then(function (r) { if (!r.ok) throw new Error('The admin did not answer (HTTP ' + r.status + '). Try again.'); return r.json() })
       .then(function (j) {
         if (j.ok) return j.result
@@ -385,6 +395,7 @@ function gate(msg, reason) {
   $('gate').hidden = false
   $('signout').hidden = true
   $('dlBtn').hidden = true
+  $('orgPickL').hidden = true
   var s = readS()
   if (s && !$('gEmail').value) $('gEmail').value = s.email
   setMsg(msg, reason ? 'bad' : '')
@@ -442,7 +453,16 @@ function setMode(m) {
   $('gPass').setAttribute('autocomplete', m === 'create' ? 'new-password' : 'current-password')
   setMsg('')
 }
-$('gOrg').textContent = CFG.org
+$('gOrg').textContent = CFG.orgs.map(function (o) { return o.name }).join(' · ')
+$('orgPick').innerHTML = CFG.orgs.map(function (o) { return '<option value="' + o.id + '">' + esc(o.name) + '</option>' }).join('')
+$('orgPick').onchange = function () {
+  var sel = this, was = orgNow().id
+  if (S.dirty && !confirm('You have changes that are not saved. Switch organisation anyway?')) { sel.value = was; return }
+  try { localStorage.setItem(ORG_KEY, sel.value) } catch (e) { /* private window */ }
+  S.data = null; S.list = []; S.groups = []; S.dirty = false; S.usage = null; S.audit = null; S.edit = null
+  sel.disabled = true
+  reload().catch(function (e) { alert(String(e && e.message || e)) }).then(function () { sel.disabled = false })
+}
 $('gGoogle').onclick = function () {
   var btn = this; btn.disabled = true
   setMsg('Waiting for Google…')
@@ -492,19 +512,6 @@ $('signout').onclick = function () {
   S.dirty = false; writeS(null); $('gPass').value = ''; gate('Signed out.')
 }
 
-// ── API keys: shown here, set on the Google page ──
-function renderKeys() {
-  var d = S.data, el = $('tab-keys')
-  var byName = {}; d.keys.forEach(function (k) { byName[k.name] = k })
-  var h = '<p class="intro">The AI keys Rabbit Hole hands to the people on the list with each hourly check. They are set on the Google admin page, signed in with your Google account, never on this page. Remove one there and it is gone from every Rabbit Hole at its next check.</p>' +
-    '<div class="bar"><a class="btn" href="' + esc(CFG.google) + '" target="_blank" rel="noopener">Set keys on the Google admin page</a><span class="dim">Open it where only ' + esc(d.owner) + ' is signed in to Google.</span></div>'
-  h += '<div class="card scroll"><table><thead><tr><th>Key</th><th>Value</th></tr></thead><tbody>' + d.catalog.keys.map(function (k) {
-    var s = byName[k.name] || {}
-    return '<tr class="keyrow"><td><b>' + esc(k.label) + '</b><span class="mono dim">' + esc(k.name) + '</span></td><td>' +
-      (s.set ? '<span class="pill ok">Set</span> <span class="mono">…' + esc(s.tail) + '</span>' + (s.at ? '<div class="dim" style="font-size:12px">' + when(s.at) + '</div>' : '') : '<span class="pill off">Not set</span>') + '</td></tr>'
-  }).join('') + '</tbody></table></div>'
-  el.innerHTML = h
-}
 var toastT
 function toast(msg, bad) { var t = $('toast'); t.textContent = msg; t.className = 'toast' + (bad ? ' bad' : ''); t.hidden = false; clearTimeout(toastT); toastT = setTimeout(function () { t.hidden = true }, bad ? 6000 : 2600) }
 function fail(e) { toast(String(e && e.message || e).replace(/^Exception: /, ''), true) }
@@ -864,7 +871,7 @@ function renderGames() {
   }
 }
 
-function renderKeysOnGoogle_() {
+function renderKeys() {
   var d = S.data, el = $('tab-keys')
   var byName = {}; d.keys.forEach(function (k) { byName[k.name] = k })
   var labelOf = {}; d.catalog.modules.forEach(function (m) { labelOf[m.id] = m.label })
@@ -1197,7 +1204,8 @@ function start() {
   return idToken().then(function (t) {
     if (!t) { gate(''); return }
     setMsg('Opening…')
-    return reload().then(function () { $('gate').hidden = true; $('signout').hidden = false; $('dlBtn').hidden = false; setMsg('') })
+    $('orgPick').value = orgNow().id
+    return reload().then(function () { $('gate').hidden = true; $('signout').hidden = false; $('dlBtn').hidden = false; $('orgPickL').hidden = false; setMsg('') })
       .catch(function (e) { if (!e.gated) gate(String(e && e.message || e), 'error') })
   })
 }
